@@ -120,7 +120,7 @@ void Queue::enlarge() {
 	head = 0;
 	tail = j;
 
-	if (data != NULL) {
+	if (data != nullptr) {
 		delete[] data;
 	}
 	data = newData;

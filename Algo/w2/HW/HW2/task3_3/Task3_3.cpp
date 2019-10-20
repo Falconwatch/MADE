@@ -14,8 +14,8 @@ using namespace std;
 
 class Sequence {
 public:
-	Sequence(const int maxSize = 1000000): last(0) {
-		data = new int[maxSize];
+	Sequence(): last(0), size(0), data(nullptr) {
+		Enlarge();
 	}
 
 	~Sequence() {
@@ -23,17 +23,14 @@ public:
 	}
 
 	void AddElement(int element) {
+		if (last == size)
+			Enlarge();
 		data[last] = element;
 		last++;
 	}
 
 	int64_t countInversions() {
-		
-		int* buff = new int[last];
-		int64_t a=mergeSort(data, 0, last - 1);
-
-		//Show();
-		//delete [] buff;
+		int64_t a=ModifiedMergeSort(data, 0, last - 1);
 		return a;
 	}
 
@@ -47,8 +44,31 @@ public:
 private:
 	int* data;
 	int last;
+	int size;
 
-	int64_t merge(int arr[], int l, int m, int r)
+	void Enlarge() {
+		int newSize; //new buffer size
+		if (size > 0) {
+			newSize = size * 2;
+		}
+		else {
+			newSize = 8;
+		}
+
+		int* newData = new int[newSize];
+
+		for (int i = 0; i < last; i++) {
+			newData[i] = data[i];
+		}
+
+		if (data != nullptr) {
+			delete[] data;
+		}
+		data = newData;
+		size = newSize;
+	}
+
+	int64_t ModifiedMerge(int arr[], int l, int m, int r)
 	{
 		int64_t inverses = 0;
 		int i, j, k;
@@ -110,7 +130,7 @@ private:
 
 	/* l is for left index and r is right index of the
 	   sub-array of arr to be sorted */
-	int64_t mergeSort(int arr[], int l, int r)
+	int64_t ModifiedMergeSort(int arr[], int l, int r)
 	{
 		int64_t inv1 = 0, inv2 = 0, inv3 = 0;
 		if (l < r)
@@ -120,10 +140,10 @@ private:
 			int m = l + (r - l) / 2;
 
 			// Sort first and second halves 
-			inv1 = mergeSort(arr, l, m);
-			inv2 = mergeSort(arr, m + 1, r);
+			inv1 = ModifiedMergeSort(arr, l, m);
+			inv2 = ModifiedMergeSort(arr, m + 1, r);
 
-			inv3 = merge(arr, l, m, r);
+			inv3 = ModifiedMerge(arr, l, m, r);
 		}
 		return inv1 + inv2 + inv3;
 	}

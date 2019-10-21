@@ -1,4 +1,5 @@
 ﻿/**
+Автор: Щербаков Игорь
 Во всех задачах из следующего списка следует написать структуру данных, обрабатывающую команды push* и pop*.
 Формат входных данных.
 В первой строке количество команд n. n ≤ 100000.
@@ -21,117 +22,94 @@ class Queue {
 public:
 	Queue();
 	~Queue();
-
 	/*Удалить первый элемент и вернуть его*/
-	int pop_front();
-
+	int PopFront();
 	/*Добавить новый элемент в конец*/
-	void push_back(int val);
-
+	void PushBack(int val);
 	/*Проверить, пуст ли массив*/
-	bool isEmpty();
+	bool IsEmpty();
 
 private:
-	int* data; // массив с числами
-	int size; // количество элементов, на которые выделена память
-
-	int head; // номер первого элемента
-	int tail; // номер последнего элемента
-
+	int* data_;
+	int size_;
+	int head_; // номер первого элемента
+	int tail_; // номер последнего элемента
 	// увеличивает кол-во памяти
-	void enlarge();
+	void Enlarge();
 };
 
-
-Queue::Queue(){
-	data = NULL;
-	size = 0;
-
-	head = 0;
-	tail = 0;
-
-	enlarge();
+Queue::Queue(): size_(0), head_(0), tail_(0), data_(nullptr) {
+	Enlarge();
 }
 
 Queue::~Queue() {
-	if (data != NULL) {
-		delete[] data;
-	}
+	if (data_ != NULL) delete[] data_;
 }
 
-int Queue::pop_front() {
-	if (head != tail) {
+int Queue::PopFront() {
+	if (head_ != tail_) {
 		// очередь не пуста
-		int val = data[head];
-
-		if (head == size - 1) {
-			head = 0;
+		int val = data_[head_];
+		if (head_ == size_ - 1) {
+			head_ = 0;
 		}
-		else
-		{
-			head++;
+		else {
+			head_++;
 		}
-
 		return val;
 	}
 	// очередь пуста
 	return -1;
 }
 
-void Queue::push_back(int val) {
-	if ((tail + 1) % size == head) {
+void Queue::PushBack(int val) {
+	if ((tail_ + 1) % size_ == head_) {
 		// память закончилась
-		enlarge();
-		push_back(val);
-	}
-	else
-	{
-		// добавляем следующий элемент
-		data[(tail) % size] = val;
-		tail = (tail + 1) % size;
-	}
-}
-
-bool Queue::isEmpty() {
-	return head == tail;
-}
-
-void Queue::enlarge() {
-	int newSize; //new buffer size
-	if (size > 0) {
-		newSize = size * 2;
+		Enlarge();
+		PushBack(val);
 	}
 	else {
-		newSize = 8;
+		// добавляем следующий элемент
+		data_[(tail_) % size_] = val;
+		tail_ = (tail_ + 1) % size_;
 	}
-
-	int* newData = new int[newSize]; //new buffer
-
-	int j = 0;
-	for (int i = head; i < size; i++) {
-		if (i == tail) {
-			break;
-		}
-		newData[j++] = data[i];
-		if (i == size - 1) {
-			i = -1;
-		}
-	}
-	head = 0;
-	tail = j;
-
-	if (data != nullptr) {
-		delete[] data;
-	}
-	data = newData;
-	size = newSize;
 }
 
+bool Queue::IsEmpty() {
+	return head_ == tail_;
+}
 
+void Queue::Enlarge() {
+	int newSize;
+	if (size_ > 0) {
+		newSize = size_ * 2;
+		int* newData = new int[newSize];
+		int j = 0;
+		for (int i = head_; i < size_; i++) {
+			if (i == tail_) {
+				break;
+			}
+			newData[j++] = data_[i];
+			if (i == size_ - 1) {
+				i = -1;
+			}
+		}
+		head_ = 0;
+		tail_ = j;
+		if (data_ != nullptr) {
+			delete[] data_;
+		}
+		data_ = newData;
+		size_ = newSize;
+	}
+	else {
+		size_ = 8;
+		data_ = new int[size_];
+	}
+}
 
 int main(){
-	Queue q;
-	
+	Queue* q = new Queue();
 	bool everything_is_ok = true;
 	//чтение числа команд
 	int n;
@@ -141,16 +119,15 @@ int main(){
 		int a, b;
 		std::cin >> a >> b;
 		if (a == 2) {
-			int v = q.pop_front();
+			int v = q->PopFront();
 			if (b != v) {
 				everything_is_ok = false;
 			}
 		}
-		if (a == 3) {
-			q.push_back(b);
+		else if (a == 3) {
+			q->PushBack(b);
 		}
 	}
-
 	//вывод результата проверки
 	if (everything_is_ok) {
 		std::cout << "YES";

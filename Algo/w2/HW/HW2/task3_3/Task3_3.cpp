@@ -29,7 +29,7 @@ public:
 		last++;
 	}
 
-	int64_t countInversions() {
+	int64_t CountInversions() {
 		return ModifiedMergeSort(data, 0, last - 1);
 	}
 
@@ -148,7 +148,7 @@ int main() {
 		}
 	}
 
-	cout << mySeq->countInversions();
+	cout << mySeq->CountInversions();
 
 	delete mySeq;
 	return 0;

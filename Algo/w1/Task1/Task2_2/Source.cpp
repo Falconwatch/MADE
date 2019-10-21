@@ -35,8 +35,8 @@ class Heap {
 		void AddElement(int element);
 
 	private:
-		int* data;
-		int heapSize;
+		int* data_;
+		int heap_size_;
 		/*Просеять элемент вверх*/
 		void SiftUp(int i);
 		/* Просеять элемент вниз*/
@@ -44,62 +44,62 @@ class Heap {
 };
 
 #pragma region Имплементация методов кучи
-Heap::Heap(int* arr, int arr_size): heapSize(0) {
-	data = new int[arr_size];
+Heap::Heap(int* arr, int arr_size): heap_size_(0) {
+	data_ = new int[arr_size];
 	for (int i = 0; i < arr_size; i++) {
 		AddElement(arr[i]);
 	}
 }
 
 Heap::~Heap() {
-	delete[] data;
+	if (data_!=nullptr)	delete[] data_;
 }
 
 void Heap::PrintData() {
-	for (int i = 0; i < heapSize; i++) {
-		std::cout << data[i] << " ";
+	for (int i = 0; i < heap_size_; i++) {
+		std::cout << data_[i] << " ";
 	}
 }
 
 int Heap::PopMinimum() {
-	int tmp = data[0];
-	data[0] = data[heapSize - 1];
-	heapSize--;
+	int tmp = data_[0];
+	data_[0] = data_[heap_size_ - 1];
+	heap_size_--;
 	SiftDown(0);
 	return tmp;
 }
 
 int Heap::GetMinimum() {
-	return data[0];
+	return data_[0];
 }
 
 int Heap::GetSize() {
-	return heapSize;
+	return heap_size_;
 }
 
 void Heap::AddElement(int element) {
-	data[heapSize] = element;
-	SiftUp(heapSize);
-	heapSize++;
+	data_[heap_size_] = element;
+	SiftUp(heap_size_);
+	heap_size_++;
 }
 
 void Heap::SiftUp(int i) {
-	while (data[i] < data[(i - 1) / 2]) {
-		std::swap(data[i], data[(i - 1) / 2]);
+	while (data_[i] < data_[(i - 1) / 2]) {
+		std::swap(data_[i], data_[(i - 1) / 2]);
 		i = (i - 1) / 2;
 	}
 }
 
 void Heap::SiftDown(int i) {
-	while (2 * i + 1 < heapSize) {
+	while (2 * i + 1 < heap_size_) {
 		int left = 2 * i + 1;
 		int right = 2 * i + 2;
 		int j = left;
-		if (right < heapSize and data[right] < data[left])
+		if (right < heap_size_ and data_[right] < data_[left])
 			j = right;
-		if (data[i] <= data[j])
+		if (data_[i] <= data_[j])
 			break;
-		std::swap(data[i], data[j]);
+		std::swap(data_[i], data_[j]);
 		i = j;
 	}
 }

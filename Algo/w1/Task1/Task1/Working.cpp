@@ -16,6 +16,7 @@ a = 4 ­ pop back
 */
 
 #include <iostream>
+#include <cassert>
 using namespace std;
 
 class Queue {
@@ -47,19 +48,18 @@ Queue::~Queue() {
 }
 
 int Queue::PopFront() {
-	if (head_ != tail_) {
-		// очередь не пуста
-		int val = data_[head_];
-		if (head_ == size_ - 1) {
-			head_ = 0;
-		}
-		else {
-			head_++;
-		}
-		return val;
+	if(head_ == tail_)
+		throw "Queue is empty";
+
+	// очередь не пуста
+	int val = data_[head_];
+	if (head_ == size_ - 1) {
+		head_ = 0;
 	}
-	// очередь пуста
-	return -1;
+	else {
+		head_++;
+	}
+	return val;
 }
 
 void Queue::PushBack(int val) {
@@ -119,7 +119,11 @@ int main(){
 		int a, b;
 		std::cin >> a >> b;
 		if (a == 2) {
-			int v = q->PopFront();
+			int v = -1;
+			try {
+				v = q->PopFront();
+			}
+			catch(...){}
 			if (b != v) {
 				everything_is_ok = false;
 			}

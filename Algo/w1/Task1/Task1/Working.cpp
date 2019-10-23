@@ -135,5 +135,6 @@ int main(){
 	else {
 		std::cout << "NO";
 	}
+	delete q;
 	return 0;
 }

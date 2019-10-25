@@ -15,6 +15,30 @@
 Реализуйте стратегию выбора опорного элемента “случайный элемент”. Функцию Partition реализуйте методом прохода двумя итераторами от конца массива к началу.
 */
 
+#include <iostream>
+
+using namespace std;
+
+void QSort(int arr, int l, int r) {
+	if (l < r) {
+		int q = 1;
+		QSort(arr, l, q);
+		QSort(arr, q + 1, r);
+	}
+}
+
+int Partition(int arr, int l, int r) {
+	return 1;
+}
+
+int GetPartitioner(int* arr, int arr_strart, int arr_end) {
+	int variable_index = rand() % arr_end + arr_strart;
+	return arr[variable_index];
+}
+
 int main() {
+	int n, k;
+	cin >> n >> k;
+
 	return 0;
 }

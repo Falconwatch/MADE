@@ -21,49 +21,56 @@ class DynamicArr {
 		DynamicArr<T>();
 		~DynamicArr<T>();
 		void Append(T value);
-		int* GetArray();
+		T* GetArray();
 		int GetSize();
 	private:
-		int* data_;
+		T* data_;
 		int capacity_;
 		int tail_;
 		void Enlarge();
 };
 
 template<class T>
-DynamicArr<T>::DynamicArr(): capacity_(8), tail_(0){
-	data_ = new T[capacity_];
+DynamicArr<T>::DynamicArr(): capacity_(0), tail_(0), data_(nullptr){
+	Enlarge();
 }
 
 template<class T>
 DynamicArr<T>::~DynamicArr() {
-	if (data_ != nullptr) {
+	if (data_ != nullptr) 
 		delete[] data_;
-	}
+	
 }
 
 template <class T>
-void DynamicArr<T>::Append(T value) {
-	if (tail_ == capacity_) {
+void DynamicArr<T>::Append(T element) {
+	if (tail_ == capacity_)
 		Enlarge();
-	}
-	data_[tail_] = value;
+	data_[tail_] = element;
 	tail_++;
 }
 
 template <class T>
 void DynamicArr<T>::Enlarge() {
-	int new_capacity = capacity_ * 2;
-	int* new_data = new int[new_capacity];
-	for (int i = 0; i < tail_; i++) {
-		new_data[i] = data_[i];
+	if (capacity_ > 0) {
+		int new_capacity = capacity_ * 2;
+		T* newData = new T[new_capacity];
+		for (int i = 0; i < tail_; i++) {
+			newData[i] = data_[i];
+		}
+		if (data_ != nullptr) delete[] data_;
+		data_ = newData;
+		capacity_ = new_capacity;
 	}
-	delete data_;
-	data_ = new_data;
+	else {
+		capacity_ = 8;
+		data_ = new T[capacity_];
+		tail_ = 0;
+	}
 }
 
 template <class T>
-int* DynamicArr<T>::GetArray() {
+T* DynamicArr<T>::GetArray() {
 	return data_;
 }
 
@@ -92,8 +99,8 @@ int64_t ModifiedMerge(T* arr, int l, int m, int r, IsLess isless)
 	int left_part_size = m - l + 1;
 	int right_part_size = r - m;
 	//создааём два подмассива
-	int* L = new int[left_part_size];
-	int* R = new int[right_part_size];
+	T* L = new T[left_part_size];
+	T* R = new T[right_part_size];
 	//заполняем два подмассива
 	for (i = 0; i < left_part_size; i++)
 		L[i] = arr[l + i];

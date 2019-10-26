@@ -15,66 +15,92 @@ using namespace std;
 #pragma region Динамический_массив
 
 /*Свой динамический массив*/
+template<class T>
 class DynamicArr {
 	public:
-		DynamicArr();
-		~DynamicArr();
-		void Append(int value);
-		int* GetArray();
+		DynamicArr<T>();
+		~DynamicArr<T>();
+		void Append(T value);
+		T* GetArray();
 		int GetSize();
 	private:
-		int* data_;
+		T* data_;
 		int capacity_;
 		int tail_;
 		void Enlarge();
 };
 
-DynamicArr::DynamicArr(): capacity_(8), tail_(0){
-	data_ = new int[capacity_];
+template<class T>
+DynamicArr<T>::DynamicArr(): capacity_(0), tail_(0), data_(nullptr){
+	Enlarge();
 }
 
-DynamicArr::~DynamicArr() {
-	if (data_ != nullptr) {
+template<class T>
+DynamicArr<T>::~DynamicArr() {
+	if (data_ != nullptr) 
 		delete[] data_;
-	}
+	
 }
 
-void DynamicArr::Append(int value) {
-	if (tail_ == capacity_) {
+template <class T>
+void DynamicArr<T>::Append(T element) {
+	if (tail_ == capacity_)
 		Enlarge();
-	}
-	data_[tail_] = value;
+	data_[tail_] = element;
 	tail_++;
 }
 
-void DynamicArr::Enlarge() {
-	int new_capacity = capacity_ * 2;
-	int* new_data = new int[new_capacity];
-	for (int i = 0; i < tail_; i++) {
-		new_data[i] = data_[i];
+template <class T>
+void DynamicArr<T>::Enlarge() {
+	if (capacity_ > 0) {
+		int new_capacity = capacity_ * 2;
+		T* newData = new T[new_capacity];
+		for (int i = 0; i < tail_; i++) {
+			newData[i] = data_[i];
+		}
+		if (data_ != nullptr) delete[] data_;
+		data_ = newData;
+		capacity_ = new_capacity;
 	}
-	delete data_;
-	data_ = new_data;
+	else {
+		capacity_ = 8;
+		data_ = new T[capacity_];
+		tail_ = 0;
+	}
 }
 
-int* DynamicArr::GetArray() {
+template <class T>
+T* DynamicArr<T>::GetArray() {
 	return data_;
 }
 
-int DynamicArr::GetSize() {
+template <class T>
+int DynamicArr<T>::GetSize() {
 	return tail_-1;
 }
 #pragma endregion
 
-int64_t ModifiedMerge(int* arr, int l, int m, int r)
+#pragma region Сортировка
+
+class IsLessInt {
+public:
+	IsLessInt() {};
+	bool operator ()(const int& l, int& r) {
+		return l <= r;
+	}
+};
+
+
+template<class T, class IsLess>
+int64_t ModifiedMerge(T* arr, int l, int m, int r, IsLess isless)
 {
 	int64_t inverses = 0;
 	int i, j, k;
 	int left_part_size = m - l + 1;
 	int right_part_size = r - m;
 	//создааём два подмассива
-	int* L = new int[left_part_size];
-	int* R = new int[right_part_size];
+	T* L = new T[left_part_size];
+	T* R = new T[right_part_size];
 	//заполняем два подмассива
 	for (i = 0; i < left_part_size; i++)
 		L[i] = arr[l + i];
@@ -87,7 +113,7 @@ int64_t ModifiedMerge(int* arr, int l, int m, int r)
 	k = l;
 	while (i < left_part_size && j < right_part_size)
 	{
-		if (L[i] <= R[j]) {
+		if (isless(L[i], R[j])) {
 			arr[k] = L[i];
 			i++;
 		}
@@ -117,27 +143,30 @@ int64_t ModifiedMerge(int* arr, int l, int m, int r)
 	return inverses;
 }
 
-int64_t ModifiedMergeSort(int arr[], int l, int r)
+template<class T, class IsLess>
+int64_t ModifiedMergeSort(T* arr, int l, int r, IsLess isless = IsLessInt())
 {
 	int64_t leftInverses = 0, rightInverses = 0, currentInverses = 0;
 	if (l < r) {
 		int m = l + (r - l) / 2;
 		// Сортируем две части
-		leftInverses = ModifiedMergeSort(arr, l, m);
-		rightInverses = ModifiedMergeSort(arr, m + 1, r);
+		leftInverses = ModifiedMergeSort(arr, l, m, isless);
+		rightInverses = ModifiedMergeSort(arr, m + 1, r, isless);
 		//считаем количество инверсий в текущем мердже
-		currentInverses = ModifiedMerge(arr, l, m, r);
+		currentInverses = ModifiedMerge(arr, l, m, r, isless);
 	}
 	//результат = инверсии в первой половине + инверсии во второй половине + инверсии при их слиянии
 	return leftInverses + rightInverses + currentInverses;
 }
 
+#pragma endregion
+
+
 int main() {
 	int64_t cnt = 0;
 	//Читаем ввод
 	string s;
-	int i;
-	DynamicArr* arr = new DynamicArr();
+	DynamicArr<int>* arr = new DynamicArr<int>();
 	while (getline(cin, s)) {
 		if (s.empty()) {
 			break;
@@ -148,9 +177,7 @@ int main() {
 		}
 	}
 	//Считаем количество инверсий и выводим
-	cout << ModifiedMergeSort(arr->GetArray(),0, arr->GetSize());
-	cout << arr->GetArray();
-	//cout << mySeq->CountInversions();
+	cout << ModifiedMergeSort(arr->GetArray(), 0, arr->GetSize(), IsLessInt());
 	//чистим
 	delete arr;
 	return 0;

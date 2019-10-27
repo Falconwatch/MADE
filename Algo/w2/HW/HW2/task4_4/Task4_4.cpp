@@ -19,34 +19,35 @@
 using namespace std;
 
 
-int GetPartitioner(int min, int max) {
+int GetPivot(int min, int max) {
 	int variable_index = rand() % (max - min + 1) + min;
 	return variable_index;
 }
 
 int Partition(int* arr, int l, int r) {
-	int p = GetPartitioner(l, r);
+	int p = GetPivot(l, r);
 	if (l != r)
-		std::swap(arr[p], arr[r]);
-	int x = arr[r];
-	int i = l - 1;
-	for (int j = l; j <= r; j++) {
-		if (arr[j] <= x)
-			std::swap(arr[++i], arr[j]);
+		std::swap(arr[p], arr[l]);
+	int x = arr[l];
+	int i = r+1;
+	for (int j = r; j >= l; j--) {
+		if (arr[j] >= x)
+			std::swap(arr[--i], arr[j]);
 	}
 	return i;
 }
 
 
 int KStat(int* arr, int n, int k) {
-	int left = 0, right = n - 1;
+	int left = 0;
+	int right = n - 1;
 	while (true) {
-		int pos = Partition(arr, left, right);
-		if (pos < k)
-			left = pos + 1;
+		int p = Partition(arr, left, right);
+		if (p < k)
+			left = p + 1;
 		else
-			if (pos > k)
-				right = pos - 1;
+			if (p > k)
+				right = p - 1;
 			else
 				return k;
 	}
@@ -62,7 +63,6 @@ int main() {
 
 	int k_ind = KStat(arr, n, k);
 	cout << arr[k_ind];
-
 
 	delete[] arr;
 	return 0;

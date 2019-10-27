@@ -18,36 +18,47 @@
 #include <iostream>
 using namespace std;
 
-
+//выбор опорного элемента
 int GetPivot(int min, int max) {
 	int variable_index = rand() % (max - min + 1) + min;
 	return variable_index;
 }
 
-int Partition(int* arr, int l, int r) {
-	int p = GetPivot(l, r);
+class IsGrInt {
+public:
+	IsGrInt() {};
+	bool operator ()(const int& l, int& r) {
+		return l >= r;
+	}
+};
+
+template <class T, class IsGr>
+int Partition(T* arr, int l, int r, IsGr isgr) {
+	int pivot_point = GetPivot(l, r);
+	//опорный элемент в начало
 	if (l != r)
-		std::swap(arr[p], arr[l]);
-	int x = arr[l];
+		std::swap(arr[pivot_point], arr[l]);
+	//проходим массив с конца
+	T x = arr[l];
 	int i = r+1;
 	for (int j = r; j >= l; j--) {
-		if (arr[j] >= x)
+		if (isgr(arr[j], x))
 			std::swap(arr[--i], arr[j]);
 	}
 	return i;
 }
 
-
-int KStat(int* arr, int n, int k) {
+template <class T, class IsGr>
+int KStat(T* arr, int n, int k, IsGr isgr) {
 	int left = 0;
 	int right = n - 1;
 	while (true) {
-		int p = Partition(arr, left, right);
-		if (p < k)
-			left = p + 1;
+		int part = Partition(arr, left, right, isgr);
+		if (part < k)
+			left = part + 1;
 		else
-			if (p > k)
-				right = p - 1;
+			if (part > k)
+				right = part - 1;
 			else
 				return k;
 	}
@@ -61,7 +72,7 @@ int main() {
 		cin >> arr[i];
 	}
 
-	int k_ind = KStat(arr, n, k);
+	int k_ind = KStat(arr, n, k, IsGrInt());
 	cout << arr[k_ind];
 
 	delete[] arr;

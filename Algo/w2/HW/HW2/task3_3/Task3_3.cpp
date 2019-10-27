@@ -1,170 +1,184 @@
-/*
-3_3. ���������� ��������.
-���� ������������������ ����� ����� �� ��������� (-10^9 .. 10^9). ����� ������������������ �� ������ 10^6. ����� �������� �� ������ � ������. ���������� ����� �� �������.  
-����� ���������� ��������� n, � ����� �������� � ������� a = a[i]: i �� [0..n-1].
-��������� ���������� ���������� ����� ��� �������� (i,j) �� [0..n-1], ��� (i < j � a[i] > a[j]).
-��������: ���������� �������� ����� ���� ������ 4*10^9 - ����������� int64_t.
+﻿/*
+Автор: Щербаков Игорь MADE-11
+3_3. Количество инверсий.
+Дана последовательность целых чисел из диапазона (-10^9 .. 10^9). Длина последовательности не больше 10^6. Числа записаны по одному в строке. Количество чисел не указано.  
+Пусть количество элементов n, и числа записаны в массиве a = a[i]: i из [0..n-1].
+Требуется напечатать количество таких пар индексов (i,j) из [0..n-1], что (i < j и a[i] > a[j]).
+Указание: количество инверсий может быть больше 4*10^9 - используйте int64_t.
 */
-
 #include <iostream>
 #include <stdint.h>
 #include <sstream>
 
 using namespace std;
 
-class Sequence {
-public:
-	Sequence(): last(0), size(0), data(nullptr) {
-		Enlarge();
-	}
+#pragma region Динамический_массив
 
-	~Sequence() {
-		delete[] data;
-	}
+/*Свой динамический массив*/
+template<class T>
+class DynamicArr {
+	public:
+		DynamicArr<T>();
+		~DynamicArr<T>();
+		void Append(T value);
+		T* GetArray();
+		int GetSize();
+	private:
+		T* data_;
+		int capacity_;
+		int tail_;
+		void Enlarge();
+};
 
-	void AddElement(int element) {
-		if (last == size)
-			Enlarge();
-		data[last] = element;
-		last++;
-	}
+template<class T>
+DynamicArr<T>::DynamicArr(): capacity_(0), tail_(0), data_(nullptr){
+	Enlarge();
+}
 
-	int64_t countInversions() {
-		int64_t a=ModifiedMergeSort(data, 0, last - 1);
-		return a;
-	}
-
-	void Show() {
-		for (int i = 0; i < last;i++) {
-			cout << data[i];
-		}
-	}
+template<class T>
+DynamicArr<T>::~DynamicArr() {
+	if (data_ != nullptr) 
+		delete[] data_;
 	
+}
 
-private:
-	int* data;
-	int last;
-	int size;
+template <class T>
+void DynamicArr<T>::Append(T element) {
+	if (tail_ == capacity_)
+		Enlarge();
+	data_[tail_] = element;
+	tail_++;
+}
 
-	void Enlarge() {
-		int newSize; //new buffer size
-		if (size > 0) {
-			newSize = size * 2;
+template <class T>
+void DynamicArr<T>::Enlarge() {
+	if (capacity_ > 0) {
+		int new_capacity = capacity_ * 2;
+		T* newData = new T[new_capacity];
+		for (int i = 0; i < tail_; i++) {
+			newData[i] = data_[i];
 		}
-		else {
-			newSize = 8;
-		}
-
-		int* newData = new int[newSize];
-
-		for (int i = 0; i < last; i++) {
-			newData[i] = data[i];
-		}
-
-		if (data != nullptr) {
-			delete[] data;
-		}
-		data = newData;
-		size = newSize;
+		if (data_ != nullptr) delete[] data_;
+		data_ = newData;
+		capacity_ = new_capacity;
 	}
-
-	int64_t ModifiedMerge(int arr[], int l, int m, int r)
-	{
-		int64_t inverses = 0;
-		int i, j, k;
-		int n1 = m - l + 1;
-		int n2 = r - m;
-
-		/* create temp arrays */
-		int* L = new int[n1];
-		int* R = new int[n2];
-
-		/* Copy data to temp arrays L[] and R[] */
-		for (i = 0; i < n1; i++)
-			L[i] = arr[l + i];
-		for (j = 0; j < n2; j++)
-			R[j] = arr[m + 1 + j];
-
-		/* Merge the temp arrays back into arr[l..r]*/
-		i = 0; // Initial index of first subarray 
-		j = 0; // Initial index of second subarray 
-		k = l; // Initial index of merged subarray 
-		while (i < n1 && j < n2)
-		{
-			if (L[i] <= R[j])
-			{
-				arr[k] = L[i];
-				i++;
-			}
-			else
-			{
-				inverses += n1 - i;
-				arr[k] = R[j];
-				j++;
-			}
-			k++;
-		}
-
-		/* Copy the remaining elements of L[], if there
-		   are any */
-		while (i < n1)
-		{
-			arr[k] = L[i];
-			i++;
-			k++;
-		}
-
-		/* Copy the remaining elements of R[], if there
-		   are any */
-		while (j < n2)
-		{
-			arr[k] = R[j];
-			j++;
-			k++;
-		}
-
-		delete[] L;
-		delete[] R;
-		return inverses;
+	else {
+		capacity_ = 8;
+		data_ = new T[capacity_];
+		tail_ = 0;
 	}
+}
 
-	/* l is for left index and r is right index of the
-	   sub-array of arr to be sorted */
-	int64_t ModifiedMergeSort(int arr[], int l, int r)
-	{
-		int64_t inv1 = 0, inv2 = 0, inv3 = 0;
-		if (l < r)
-		{
-			// Same as (l+r)/2, but avoids overflow for 
-			// large l and h 
-			int m = l + (r - l) / 2;
+template <class T>
+T* DynamicArr<T>::GetArray() {
+	return data_;
+}
 
-			// Sort first and second halves 
-			inv1 = ModifiedMergeSort(arr, l, m);
-			inv2 = ModifiedMergeSort(arr, m + 1, r);
+template <class T>
+int DynamicArr<T>::GetSize() {
+	return tail_-1;
+}
+#pragma endregion
 
-			inv3 = ModifiedMerge(arr, l, m, r);
-		}
-		return inv1 + inv2 + inv3;
+#pragma region Сортировка
+
+class IsLessInt {
+public:
+	IsLessInt() {};
+	bool operator ()(const int& l, int& r) {
+		return l <= r;
 	}
 };
 
+
+template<class T, class IsLess>
+int64_t ModifiedMerge(T* arr, int l, int m, int r, IsLess isless)
+{
+	int64_t inverses = 0;
+	int i, j, k;
+	int left_part_size = m - l + 1;
+	int right_part_size = r - m;
+	//создааём два подмассива
+	T* L = new T[left_part_size];
+	T* R = new T[right_part_size];
+	//заполняем два подмассива
+	for (i = 0; i < left_part_size; i++)
+		L[i] = arr[l + i];
+	for (j = 0; j < right_part_size; j++)
+		R[j] = arr[m + 1 + j];
+
+	//сливаем два подмассива
+	i = 0;
+	j = 0;
+	k = l;
+	while (i < left_part_size && j < right_part_size)
+	{
+		if (isless(L[i], R[j])) {
+			arr[k] = L[i];
+			i++;
+		}
+		else {
+			//Считаем скоько чисел из левого массива прошли, сдвигая элемент из правого массива в начало
+			inverses += left_part_size - i;
+			arr[k] = R[j];
+			j++;
+		}
+		k++;
+	}
+
+	//сливаем  части в один массив
+	while (i < left_part_size) {
+		arr[k] = L[i];
+		i++;
+		k++;
+	}
+	while (j < right_part_size) {
+		arr[k] = R[j];
+		j++;
+		k++;
+	}
+	//чистим за собой
+	delete[] L;
+	delete[] R;
+	return inverses;
+}
+
+template<class T, class IsLess>
+int64_t ModifiedMergeSort(T* arr, int l, int r, IsLess isless = IsLessInt())
+{
+	int64_t leftInverses = 0, rightInverses = 0, currentInverses = 0;
+	if (l < r) {
+		int m = l + (r - l) / 2;
+		// Сортируем две части
+		leftInverses = ModifiedMergeSort(arr, l, m, isless);
+		rightInverses = ModifiedMergeSort(arr, m + 1, r, isless);
+		//считаем количество инверсий в текущем мердже
+		currentInverses = ModifiedMerge(arr, l, m, r, isless);
+	}
+	//результат = инверсии в первой половине + инверсии во второй половине + инверсии при их слиянии
+	return leftInverses + rightInverses + currentInverses;
+}
+
+#pragma endregion
+
+
 int main() {
 	int64_t cnt = 0;
-	Sequence* mySeq = new Sequence();
+	//Читаем ввод
 	string s;
+	DynamicArr<int>* arr = new DynamicArr<int>();
 	while (getline(cin, s)) {
 		if (s.empty()) {
 			break;
 		}
 		else {
 			int a = std::stoi(s);
-			mySeq->AddElement(a);
+			arr->Append(a);
 		}
 	}
-
-	cout << mySeq->countInversions();
-
-	delete mySeq;
+	//Считаем количество инверсий и выводим
+	cout << ModifiedMergeSort(arr->GetArray(), 0, arr->GetSize(), IsLessInt());
+	//чистим
+	delete arr;
 	return 0;
 }

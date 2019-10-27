@@ -16,29 +16,54 @@
 */
 
 #include <iostream>
-
 using namespace std;
 
-void QSort(int arr, int l, int r) {
-	if (l < r) {
-		int q = 1;
-		QSort(arr, l, q);
-		QSort(arr, q + 1, r);
+
+int GetPartitioner(int min, int max) {
+	int variable_index = rand() % (max - min + 1) + min;
+	return variable_index;
+}
+
+int Partition(int* arr, int l, int r) {
+	int p = GetPartitioner(l, r);
+	if (l != r)
+		std::swap(arr[p], arr[r]);
+	int x = arr[r];
+	int i = l - 1;
+	for (int j = l; j <= r; j++) {
+		if (arr[j] <= x)
+			std::swap(arr[++i], arr[j]);
 	}
+	return i;
 }
 
-int Partition(int arr, int l, int r) {
-	return 1;
-}
 
-int GetPartitioner(int* arr, int arr_strart, int arr_end) {
-	int variable_index = rand() % arr_end + arr_strart;
-	return arr[variable_index];
+int KStat(int* arr, int n, int k) {
+	int left = 0, right = n - 1;
+	while (true) {
+		int pos = Partition(arr, left, right);
+		if (pos < k)
+			left = pos + 1;
+		else
+			if (pos > k)
+				right = pos - 1;
+			else
+				return k;
+	}
 }
 
 int main() {
 	int n, k;
 	cin >> n >> k;
+	int* arr = new int[n];
+	for (int i = 0; i < n; i++) {
+		cin >> arr[i];
+	}
 
+	int k_ind = KStat(arr, n, k);
+	cout << arr[k_ind];
+
+
+	delete[] arr;
 	return 0;
 }

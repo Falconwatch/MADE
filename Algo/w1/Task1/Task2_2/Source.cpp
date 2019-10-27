@@ -44,15 +44,19 @@ class Heap {
 };
 
 #pragma region Имплементация методов кучи
-Heap::Heap(int* arr, int arr_size): heap_size_(0) {
-	data_ = new int[arr_size];
-	for (int i = 0; i < arr_size; i++) {
-		AddElement(arr[i]);
+Heap::Heap(int* arr, int arr_size): heap_size_(arr_size) {
+	data_ = new int[heap_size_];
+	for (int i = 0; i < heap_size_; i++) {
+		data_[i] = arr[i];
+	}
+	for (int i = arr_size / 2 - 1; i >= 0; i--) {
+		SiftDown(i);
 	}
 }
 
 Heap::~Heap() {
-	if (data_!=nullptr)	delete[] data_;
+	if (data_!=nullptr)	
+		delete[] data_;
 }
 
 void Heap::PrintData() {
@@ -91,7 +95,7 @@ void Heap::SiftUp(int i) {
 }
 
 void Heap::SiftDown(int i) {
-	while (2 * i + 1 < heap_size_) {
+	while (2 * i + 1 <= heap_size_) {
 		int left = 2 * i + 1;
 		int right = 2 * i + 2;
 		int j = left;
@@ -106,9 +110,10 @@ void Heap::SiftDown(int i) {
 #pragma endregion
 
 
-int FindMinSum(Heap* heap) {
+int FindMinSum(int* arr, int n) {
 	int time = 0;
 	int Sum = 0;
+	Heap* heap = new Heap(arr, n);
 	while (heap->GetSize() > 1)
 	{
 		int min_elem = heap->PopMinimum();
@@ -118,6 +123,7 @@ int FindMinSum(Heap* heap) {
 		heap->AddElement(Sum);
 		time += Sum;
 	}
+	delete heap;
 	return time;
 }
 
@@ -130,13 +136,10 @@ int main() {
 		std::cin >> arr[i];
 	}
 
-	//кладём в кучу считанный массив
-	Heap* heap = new Heap(arr, n);
 	//считаем время
-	int minTime = FindMinSum(heap);
+	int minTime = FindMinSum(arr, n);
 	std::cout << minTime;
-	//читсим за собой
+	//чистим за собой
 	delete[] arr;
-	delete heap;
 	return 0;
 }

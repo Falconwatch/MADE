@@ -1,3 +1,4 @@
+#include<stack>
 using namespace std;
 
 #pragma region Node
@@ -87,7 +88,10 @@ int Tree::GetSize() {
 }
 int* Tree::InOrder() {
 	TreeNode* current_node = root_;
-	std::Stack()
+	std::stack<TreeNode*> st;
+	while (current_node != nullptr || st.empty() == false) {
+
+	}
 	return nullptr;
 }
 #pragma endregion

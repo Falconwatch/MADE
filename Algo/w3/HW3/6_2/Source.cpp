@@ -1,4 +1,7 @@
 #include<stack>
+#include<vector>
+#include<iostream>
+
 using namespace std;
 
 #pragma region Node
@@ -12,6 +15,7 @@ public:
 	TreeNode* GetRightChild();
 	void SetLeftChild(TreeNode* child);
 	void SetRightChild(TreeNode* child);
+	int GetData();
 
 private:
 	int data_;
@@ -26,6 +30,7 @@ TreeNode::~TreeNode() {
 	if (right_ != nullptr)
 		delete right_;
 }
+
 bool TreeNode::IsGivenDataLess(int data) {
 	return data < data_;
 }
@@ -35,7 +40,10 @@ TreeNode* TreeNode::GetLeftChild() { return left_; }
 TreeNode* TreeNode::GetRightChild() { return right_; }
 
 void TreeNode::SetLeftChild(TreeNode* child) { left_ = child; }
+
 void TreeNode::SetRightChild(TreeNode* child) { right_ = child; }
+
+int TreeNode::GetData() { return data_; }
 #pragma endregion
 
 
@@ -45,8 +53,7 @@ class Tree {
 		Tree() : root_(nullptr) {}
 		~Tree() { delete root_; }
 		void AddNode(int data);
-		int* InOrder();
-		int GetSize();
+		vector<TreeNode*> InOrder();
 	private:
 		TreeNode* root_;
 };
@@ -82,24 +89,46 @@ void Tree::AddNode(int data) {
 		}
 	}
 }
-int Tree::GetSize() {
-	int result = 0;
-	return result;
-}
-int* Tree::InOrder() {
-	TreeNode* current_node = root_;
-	std::stack<TreeNode*> st;
-	while (current_node != nullptr || st.empty() == false) {
 
-	}
-	return nullptr;
+vector<TreeNode*> Tree::InOrder() {
+	TreeNode* current_node = root_;
+	stack<TreeNode*> result;
+	vector<TreeNode*> result2;
+	while (current_node != nullptr || result.empty() == false)
+	{
+		while (current_node != nullptr)
+		{
+			result.push(current_node);
+			current_node = current_node->GetLeftChild();
+		}		
+		current_node = result.top();
+		result.pop();
+		result2.push_back(current_node);
+		current_node = current_node->GetRightChild();
+	} 
+	return result2;
 }
 #pragma endregion
 
+
+void ShowInOrder(Tree* tree) {
+	vector<TreeNode*> res = tree->InOrder();
+	for (int i = 0; i < res.size(); i++) {
+		cout<<res[i]->GetData()<<" ";
+	}
+}
+
 int main() {
 	Tree* myTree= new Tree();
-	myTree->AddNode(2);
-	myTree->AddNode(23);
-	myTree->AddNode(-23);
+	int n = 0;
+	cin >> n;
+	for (int i = 0; i < n; i++) {
+		int k;
+		cin >> k;
+		myTree->AddNode(k);
+	}
+
+	ShowInOrder(myTree);
+	delete myTree;
 	return 0;
 }

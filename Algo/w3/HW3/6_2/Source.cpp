@@ -5,22 +5,12 @@
 using namespace std;
 
 #pragma region Node
-class IsLessInt {
-public:
-	IsLessInt() {};
-	bool operator ()(int l, int r) {
-		return l < r;
-	}
-};
-
 template<class T>
 class TreeNode
 {
 public:
 	TreeNode<T>(T d);
 	~TreeNode<T>();
-	template<class T>
-	bool IsGivenDataLess(T data);
 	TreeNode<T>* GetLeftChild();
 	TreeNode<T>* GetRightChild();
 	void SetLeftChild(TreeNode<T>* child);
@@ -60,8 +50,15 @@ template<class T>
 T TreeNode<T>::GetData() { return data_; }
 #pragma endregion
 
-
 #pragma region Tree
+class IsLessInt {
+public:
+	IsLessInt() {};
+	bool operator ()(int l, int r) {
+		return l < r;
+	}
+};
+
 template<class T, class IsLess>
 class Tree {
 	public:
@@ -75,10 +72,10 @@ class Tree {
 };
 
 template<class T, class IsLess>
-Tree<T,IsLess>::Tree<T,IsLess>() : root_(nullptr) {}
+Tree<T, IsLess>::Tree(): root_(nullptr) {}
 
 template<class T, class IsLess>
-Tree<T, IsLess>::~Tree<T, IsLess>(){
+Tree<T, IsLess>::~Tree(){
 	if (root_ != nullptr) {
 		delete root_;
 	}
@@ -120,21 +117,21 @@ void Tree<T, IsLess>::AddNode(T data) {
 template<class T, class IsLess>
  vector<TreeNode<T>*> Tree<T, IsLess>::InOrder() {
 	TreeNode<T>* current_node = root_;
-	stack<TreeNode<T>*> result;
-	vector<TreeNode<T>*> result2;
-	while (current_node != nullptr || result.empty() == false)
+	stack<TreeNode<T>*> tmp_stack;
+	vector<TreeNode<T>*> result;
+	while (current_node != nullptr || tmp_stack.empty() == false)
 	{
 		while (current_node != nullptr)
 		{
-			result.push(current_node);
+			tmp_stack.push(current_node);
 			current_node = current_node->GetLeftChild();
 		}		
-		current_node = result.top();
-		result.pop();
-		result2.push_back(current_node);
+		current_node = tmp_stack.top();
+		tmp_stack.pop();
+		result.push_back(current_node);
 		current_node = current_node->GetRightChild();
 	} 
-	return result2;
+	return result;
 }
 #pragma endregion
 

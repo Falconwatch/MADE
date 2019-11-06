@@ -4,6 +4,9 @@
 В реализации используйте сплей деревья.
 */
 
+
+
+
 class Node {
 public:
 	Node(int data): data_(data) {}
@@ -18,8 +21,14 @@ public:
 	
 	Node* GetLeft() { return left_; }
 	Node* GetRight() { return right_; }
-	void SetLeft(Node* child) { left_=child; }
-	void SetRight(Node* child) { right_ = child; }
+	void SetLeft(Node* child) { 
+		left_=child; 
+		child->SetParrent(this);
+	}
+	void SetRight(Node* child) { 
+		right_ = child; 
+		child->SetParrent(this);
+	}
 
 	bool IsLeft() {
 		return isleft_;
@@ -33,9 +42,15 @@ private:
 	Node* right_;
 };
 
+struct TreesPair{
+public:
+	Node* first_tree_;
+	Node* second_tree_;
+};
+
 class SplayTree {
 public:
-	SplayTree();
+	SplayTree() {};
 	~SplayTree();
 	void AddValue(int value) {
 		Node* new_node = new Node(value);
@@ -114,16 +129,33 @@ private:
 		}
 	}
 
-	void Split(Node* node) {
-		return;
+	TreesPair Split(Node* x) {
+		Splay(x);
+		Node* left_subtree = root_->GetLeft();
+		Node* right_subtree = root_->GetRight();
+		TreesPair result = TreesPair();
+		result.first_tree_ = left_subtree;
+		result.second_tree_ = right_subtree;
+		return result;
 	}
 
-	void Add(Node* node) {
+	void Add(Node* x) {
+		if (root_ == nullptr) {
+			root_ = x;
+			return;
+		}
+		TreesPair subtrees = Split(x);
+		root_ = x;
+		root_->SetLeft(subtrees.first_tree_);
+		root_->SetRight(subtrees.second_tree_);
 		return;
 	}
 };
 
 
 int main() {
+	SplayTree* tree = new SplayTree();
+	tree->AddValue(23);
+	tree->AddValue(32);
 	return 0;
 }

@@ -6,6 +6,8 @@
 #include<stack>
 #include<vector>
 #include<iostream>
+#include <queue> 
+
 
 using namespace std;
 
@@ -18,26 +20,26 @@ public:
 	~TreeNode<T>();
 	TreeNode<T>* GetLeftChild();
 	TreeNode<T>* GetRightChild();
+	TreeNode<T>* GetParrent();
 	void SetLeftChild(TreeNode<T>* child);
 	void SetRightChild(TreeNode<T>* child);
+	void SetParrent(TreeNode<T>* parrent);
 	T GetData();
+	void DeleteLeftChild();
+	void DeleteRightChild();
 
 private:
 	T data_;
 	TreeNode* left_;
 	TreeNode* right_;
+	TreeNode* parrent_;
 };
 
 template<class T>
 TreeNode<T>::TreeNode(T d) : data_(d), left_(nullptr), right_(nullptr) {};
 
 template<class T>
-TreeNode<T>::~TreeNode<T>() {
-	if (left_ !=nullptr)
-		delete left_;
-	if (right_ != nullptr)
-		delete right_;
-}
+TreeNode<T>::~TreeNode<T>() {}
 
 template<class T>
 TreeNode<T>* TreeNode<T>::GetLeftChild() { return left_; }
@@ -46,10 +48,21 @@ template<class T>
 TreeNode<T>* TreeNode<T>::GetRightChild() { return right_; }
 
 template<class T>
-void TreeNode<T>::SetLeftChild(TreeNode<T>* child) { left_ = child; }
+TreeNode<T>* TreeNode<T>::GetParrent() { return parrent_; }
 
 template<class T>
-void TreeNode<T>::SetRightChild(TreeNode<T>* child) { right_ = child; }
+void TreeNode<T>::SetLeftChild(TreeNode<T>* child) { 
+	child->SetParrent(this);
+	left_ = child; }
+
+template<class T>
+void TreeNode<T>::SetRightChild(TreeNode<T>* child) { 
+	child->SetParrent(this);
+	right_ = child; }
+
+template<class T>
+void TreeNode<T>::SetParrent(TreeNode<T>* parrent) { parrent_ = parrent; }
+
 
 template<class T>
 T TreeNode<T>::GetData() { return data_; }
@@ -81,8 +94,21 @@ Tree<T, IsLess>::Tree(): root_(nullptr) {}
 
 template<class T, class IsLess>
 Tree<T, IsLess>::~Tree(){
-	if (root_ != nullptr) {
-		delete root_;
+	if (root_ == nullptr)
+		return;
+	queue<TreeNode<T>*> q;
+	q.push(root_);
+	while (!q.empty())
+	{
+		TreeNode<T>* node = q.front();
+		q.pop();
+
+		if (node->GetLeftChild() != nullptr)
+			q.push(node->GetLeftChild());
+		if (node->GetRightChild() != NULL)
+			q.push(node->GetRightChild());
+
+		free(node);
 	}
 }
 

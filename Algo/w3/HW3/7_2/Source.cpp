@@ -5,13 +5,27 @@
 */
 
 #include <functional>
+#include <iostream>
+
+using namespace std;
 
 template<typename T>
 struct TreeNode {
 	TreeNode* left_, * right_;
 	TreeNode* parent_;
-	T key;
-	TreeNode(const T& init = T()) : left_(nullptr), right_(nullptr), parent_(nullptr), key(init) { }
+	T data_;
+	int myChildrenCount_;
+	int GetRightChildrenCount() {
+		if (right_ == nullptr) return 0;
+		else return right_->myChildrenCount_+1;
+	}
+
+	int GetLeftChildrenCount() {
+		if (left_==nullptr) return 0;
+		else return left_->myChildrenCount_+1;
+	}
+
+	TreeNode(const T& init = T()) : left_(nullptr), right_(nullptr), parent_(nullptr), data_(init), myChildrenCount_(0){ }
 	~TreeNode() {
 		if (left_ != nullptr) {
 			delete left_;
@@ -35,7 +49,14 @@ private:
 		TreeNode<T>* y = x->right_;
 		if (y) {
 			x->right_ = y->left_;
-			if (y->left_) y->left_->parent_ = x;
+			if (y->left_) { 
+				y->left_->parent_ = x;
+			}
+			//считаем детей
+			int tmp = x->myChildrenCount_;
+			x->myChildrenCount_ -= (y->GetRightChildrenCount()+1); //икс потерял детей правойго ребёнка игрека и сам игрек
+			y->myChildrenCount_ = tmp; //игрек приобрёл всех дей икса
+
 			y->parent_ = x->parent_;
 		}
 
@@ -50,7 +71,14 @@ private:
 		TreeNode<T>* y = x->left_;
 		if (y) {
 			x->left_ = y->right_;
-			if (y->right_) y->right_->parent_ = x;
+			if (y->right_) { 
+				y->right_->parent_ = x; 
+			}
+			//считаем детей
+			int tmp = x->myChildrenCount_;
+			x->myChildrenCount_ -= (y->GetLeftChildrenCount()+1); //икс потерял детей левого ребёнка игрека и сам игрек
+			y->myChildrenCount_ = tmp; //игрек приобрёл всех дей икса
+
 			y->parent_ = x->parent_;
 		}
 		if (!x->parent_) root_ = y;
@@ -101,6 +129,7 @@ private:
 		while (u->right_) u = u->right_;
 		return u;
 	}
+
 public:
 	SplayTree() : root_(nullptr), p_size_(0) { }
 	~SplayTree() {
@@ -109,64 +138,52 @@ public:
 		}
 	}
 
-	void insert(const T& key) {
+	int insert(const T& key) {
 		TreeNode<T>* z = root_;
 		TreeNode<T>* p = nullptr;
 
 		while (z) {
+			z->myChildrenCount_ += 1;
 			p = z;
-			if (comp_(z->key, key)) z = z->right_;
+			if (comp_(z->data_, key)) z = z->right_;
 			else z = z->left_;
+			
 		}
 
 		z = new TreeNode<T>(key);
 		z->parent_ = p;
 
 		if (!p) root_ = z;
-		else if (comp_(p->key, z->key)) p->right_ = z;
+		else if (comp_(p->data_, z->data_)) p->right_ = z;
 		else p->left_ = z;
 
 		Splay(z);
 		p_size_++;
+		return root_->GetRightChildrenCount();
 	}
 
-	TreeNode<T>* find(const T& key) {
+	int CountNodes(TreeNode<T>* node)
+	{
+		if (node == NULL)
+			return 0;
+		if (node->left_ == NULL && node->right_ == NULL)
+			return 1;
+		else
+			return CountNodes(node->left_) + CountNodes(node->right_);
+	}
+
+	TreeNode<T>* find(const T& data) {
 		TreeNode<T>* z = root_;
 		while (z) {
-			if (comp_(z->key, key)) z = z->right;
-			else if (comp_(key, z->key)) z = z->left;
+			if (comp_(z->data_, data)) z = z->right_;
+			else if (comp_(data, z->data_)) z = z->left_;
 			else return z;
 		}
 		return nullptr;
 	}
 
-	void erase(const T& key) {
-		TreeNode<T>* z = find(key);
-		if (!z) return;
-
-		Splay(z);
-
-		if (!z->left_) Replace(z, z->right_);
-		else if (!z->right_) Replace(z, z->left_);
-		else {
-			TreeNode<T>* y = GetMinimum(z->right_);
-			if (y->parent != z) {
-				Replace(y, y->right);
-				y->right = z->right_;
-				y->right->parent = y;
-			}
-			Replace(z, y);
-			y->left = z->left_;
-			y->left->parent = y;
-		}
-
-		delete z;
-		p_size_--;
-	}
-
-
-	const T& minimum() { return GetMinimum(root_)->key; }
-	const T& maximum() { return GetMaximum(root_)->key; }
+	const T& minimum() { return GetMinimum(root_)->data_; }
+	const T& maximum() { return GetMaximum(root_)->data_; }
 
 	bool empty() const { return root_ == nullptr; }
 	unsigned long size() const { return p_size_; }
@@ -175,9 +192,12 @@ public:
 int main()
 {
 	SplayTree<int>* st = new SplayTree<int>();
-	st->insert(100);
-	st->insert(200);
-	st->insert(10);
+	
+	std::cout << st->insert(100);
+	std::cout << st->insert(200);
+	std::cout << st->insert(50);
+	std::cout << st->insert(30);
+	std::cout << st->insert(150);
 
 	delete st;
 	return 0;

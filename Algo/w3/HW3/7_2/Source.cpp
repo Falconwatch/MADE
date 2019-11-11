@@ -1,161 +1,199 @@
-/*
-Â îäíîé âîåííîé ÷àñòè ðåøèëè ïîñòðîèòü â îäíó øåðåíãó ïî ðîñòó. Ò.ê. ÷àñòü áûëà äàëåêî íå îáðàçöîâàÿ, òî ñîëäàòû ÷àñòî ïðèõîäèëè íå âîâðåìÿ, à òî èõ è âîâñå ïðèõîäèëîñü âûãîíÿòü èç øåðåíãè çà ïëîõî íà÷èùåííûå ñàïîãè. Îäíàêî ñîëäàòû â ïðîöåññå ïðèõîäà è óõîäà äîëæíû áûëè âñåãäà áûòü âûñòðîåíû ïî ðîñòó – ñíà÷àëà ñàìûå âûñîêèå, à â êîíöå – ñàìûå íèçêèå. Çà ðàññòàíîâêó ñîëäàò îòâå÷àë ïðàïîðùèê, êîòîðûé çàìåòèë èíòåðåñíóþ îñîáåííîñòü – âñå ñîëäàòû â ÷àñòè ðàçíîãî ðîñòà.
-Âàøà çàäà÷à ñîñòîèò â òîì, ÷òîáû ïîìî÷ü ïðàïîðùèêó ïðàâèëüíî ðàññòàâëÿòü ñîëäàò, à èìåííî äëÿ êàæäîãî ïðèõîäÿùåãî ñîëäàòà óêàçûâàòü, ïåðåä êàêèì ñîëäàòîì â ñòðîå îí äîëæåí ñòàíîâèòñÿ. Òðåáóåìàÿ ñêîðîñòü âûïîëíåíèÿ êîìàíäû - O(log n) àìîðòèçàöèîííî.
-Â ðåàëèçàöèè èñïîëüçóéòå ñïëåé äåðåâüÿ.
+ï»¿/*
+Ð’ Ð¾Ð´Ð½Ð¾Ð¹ Ð²Ð¾ÐµÐ½Ð½Ð¾Ð¹ Ñ‡Ð°ÑÑ‚Ð¸ Ñ€ÐµÑˆÐ¸Ð»Ð¸ Ð¿Ð¾ÑÑ‚Ñ€Ð¾Ð¸Ñ‚ÑŒ Ð² Ð¾Ð´Ð½Ñƒ ÑˆÐµÑ€ÐµÐ½Ð³Ñƒ Ð¿Ð¾ Ñ€Ð¾ÑÑ‚Ñƒ. Ð¢.Ðº. Ñ‡Ð°ÑÑ‚ÑŒ Ð±Ñ‹Ð»Ð° Ð´Ð°Ð»ÐµÐºÐ¾ Ð½Ðµ Ð¾Ð±Ñ€Ð°Ð·Ñ†Ð¾Ð²Ð°Ñ, Ñ‚Ð¾ ÑÐ¾Ð»Ð´Ð°Ñ‚Ñ‹ Ñ‡Ð°ÑÑ‚Ð¾ Ð¿Ñ€Ð¸Ñ…Ð¾Ð´Ð¸Ð»Ð¸ Ð½Ðµ Ð²Ð¾Ð²Ñ€ÐµÐ¼Ñ, Ð° Ñ‚Ð¾ Ð¸Ñ… Ð¸ Ð²Ð¾Ð²ÑÐµ Ð¿Ñ€Ð¸Ñ…Ð¾Ð´Ð¸Ð»Ð¾ÑÑŒ Ð²Ñ‹Ð³Ð¾Ð½ÑÑ‚ÑŒ Ð¸Ð· ÑˆÐµÑ€ÐµÐ½Ð³Ð¸ Ð·Ð° Ð¿Ð»Ð¾Ñ…Ð¾ Ð½Ð°Ñ‡Ð¸Ñ‰ÐµÐ½Ð½Ñ‹Ðµ ÑÐ°Ð¿Ð¾Ð³Ð¸. ÐžÐ´Ð½Ð°ÐºÐ¾ ÑÐ¾Ð»Ð´Ð°Ñ‚Ñ‹ Ð² Ð¿Ñ€Ð¾Ñ†ÐµÑÑÐµ Ð¿Ñ€Ð¸Ñ…Ð¾Ð´Ð° Ð¸ ÑƒÑ…Ð¾Ð´Ð° Ð´Ð¾Ð»Ð¶Ð½Ñ‹ Ð±Ñ‹Ð»Ð¸ Ð²ÑÐµÐ³Ð´Ð° Ð±Ñ‹Ñ‚ÑŒ Ð²Ñ‹ÑÑ‚Ñ€Ð¾ÐµÐ½Ñ‹ Ð¿Ð¾ Ñ€Ð¾ÑÑ‚Ñƒ â€“ ÑÐ½Ð°Ñ‡Ð°Ð»Ð° ÑÐ°Ð¼Ñ‹Ðµ Ð²Ñ‹ÑÐ¾ÐºÐ¸Ðµ, Ð° Ð² ÐºÐ¾Ð½Ñ†Ðµ â€“ ÑÐ°Ð¼Ñ‹Ðµ Ð½Ð¸Ð·ÐºÐ¸Ðµ. Ð—Ð° Ñ€Ð°ÑÑÑ‚Ð°Ð½Ð¾Ð²ÐºÑƒ ÑÐ¾Ð»Ð´Ð°Ñ‚ Ð¾Ñ‚Ð²ÐµÑ‡Ð°Ð» Ð¿Ñ€Ð°Ð¿Ð¾Ñ€Ñ‰Ð¸Ðº, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¹ Ð·Ð°Ð¼ÐµÑ‚Ð¸Ð» Ð¸Ð½Ñ‚ÐµÑ€ÐµÑÐ½ÑƒÑŽ Ð¾ÑÐ¾Ð±ÐµÐ½Ð½Ð¾ÑÑ‚ÑŒ â€“ Ð²ÑÐµ ÑÐ¾Ð»Ð´Ð°Ñ‚Ñ‹ Ð² Ñ‡Ð°ÑÑ‚Ð¸ Ñ€Ð°Ð·Ð½Ð¾Ð³Ð¾ Ñ€Ð¾ÑÑ‚Ð°.
+Ð’Ð°ÑˆÐ° Ð·Ð°Ð´Ð°Ñ‡Ð° ÑÐ¾ÑÑ‚Ð¾Ð¸Ñ‚ Ð² Ñ‚Ð¾Ð¼, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð¿Ð¾Ð¼Ð¾Ñ‡ÑŒ Ð¿Ñ€Ð°Ð¿Ð¾Ñ€Ñ‰Ð¸ÐºÑƒ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾ Ñ€Ð°ÑÑÑ‚Ð°Ð²Ð»ÑÑ‚ÑŒ ÑÐ¾Ð»Ð´Ð°Ñ‚, Ð° Ð¸Ð¼ÐµÐ½Ð½Ð¾ Ð´Ð»Ñ ÐºÐ°Ð¶Ð´Ð¾Ð³Ð¾ Ð¿Ñ€Ð¸Ñ…Ð¾Ð´ÑÑ‰ÐµÐ³Ð¾ ÑÐ¾Ð»Ð´Ð°Ñ‚Ð° ÑƒÐºÐ°Ð·Ñ‹Ð²Ð°Ñ‚ÑŒ, Ð¿ÐµÑ€ÐµÐ´ ÐºÐ°ÐºÐ¸Ð¼ ÑÐ¾Ð»Ð´Ð°Ñ‚Ð¾Ð¼ Ð² ÑÑ‚Ñ€Ð¾Ðµ Ð¾Ð½ Ð´Ð¾Ð»Ð¶ÐµÐ½ ÑÑ‚Ð°Ð½Ð¾Ð²Ð¸Ñ‚ÑÑ. Ð¢Ñ€ÐµÐ±ÑƒÐµÐ¼Ð°Ñ ÑÐºÐ¾Ñ€Ð¾ÑÑ‚ÑŒ Ð²Ñ‹Ð¿Ð¾Ð»Ð½ÐµÐ½Ð¸Ñ ÐºÐ¾Ð¼Ð°Ð½Ð´Ñ‹ - O(log n) Ð°Ð¼Ð¾Ñ€Ñ‚Ð¸Ð·Ð°Ñ†Ð¸Ð¾Ð½Ð½Ð¾.
+Ð’ Ñ€ÐµÐ°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ð¸ Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐ¹Ñ‚Ðµ ÑÐ¿Ð»ÐµÐ¹ Ð´ÐµÑ€ÐµÐ²ÑŒÑ.
 */
 
 
 
-
-class Node {
-public:
-	Node(int data): data_(data) {}
-	~Node() {
-		if (left_ != nullptr)
-			delete left_;
-		if (right_ != nullptr)
-			delete right_;
-	}
-	Node* GetParrent() { return parrent_; }
-	void SetParrent(Node* parrent) { parrent_=parrent; }
-	
-	Node* GetLeft() { return left_; }
-	Node* GetRight() { return right_; }
-	void SetLeft(Node* child) { 
-		left_=child; 
-		child->SetParrent(this);
-	}
-	void SetRight(Node* child) { 
-		right_ = child; 
-		child->SetParrent(this);
-	}
-
-	bool IsLeft() {
-		return isleft_;
-	}
-
-private:
+#include <iostream>
+#include <cstdio>
+#include <cstdlib>
+using namespace std;
+class TreeNode//node declaration
+{
+	public:
 	int data_;
-	bool isleft_;
-	Node* parrent_;
-	Node* left_;
-	Node* right_;
+	TreeNode* left_;
+	TreeNode* right_;
+
+	TreeNode(int data): data_(data) {
+		left_ = right_ = nullptr;
+	}
+
+	TreeNode(){
+		left_ = right_ = nullptr;
+	}
 };
 
-struct TreesPair{
+class SplayTree
+{
 public:
-	Node* first_tree_;
-	Node* second_tree_;
-};
 
-class SplayTree {
-public:
-	SplayTree() {};
-	~SplayTree();
-	void AddValue(int value) {
-		Node* new_node = new Node(value);
-		Add(new_node);
+	~SplayTree() {
+		delete root_;
 	}
 
-
-
-
-private:
-	Node* root_;
-	
-	void RotateLeft(Node* v) {
-		Node* p = v->GetParrent();
-		Node* r = v->GetRight();
-		if (p != nullptr) {
-			if (p->GetLeft() == v)
-				p->SetLeft(r);
-			else
-				p->SetRight(r);
-		}
-				
-		Node* tmp = r->GetLeft();
-		r->SetLeft(v);
-		v->SetRight(tmp);
-		v->SetParrent(r);
-		r->SetParrent(p);
-		if (v->GetRight() != nullptr)
-			v->SetParrent(v);
-	}
-	   
-	void RotateRight(Node* v) {
-		Node* p = v->GetParrent();
-		Node* l = v->GetLeft();
-		if (p != nullptr) {
-			if (p->GetRight() == v)
-				p->SetRight(l);
-			else
-				p->SetLeft(l);
-		}
-
-		Node* tmp = l->GetRight();
-		l->SetRight(v);
-		v->SetLeft(tmp);
-		v->SetParrent(l);
-		l->SetParrent(p);
-		if (v->GetLeft() != nullptr)
-			v->SetParrent(v);
+	TreeNode* ZagZagRotate(TreeNode* k2)
+	{
+		TreeNode* k1 = k2->left_;
+		k2->left_ = k1->right_;
+		k1->right_ = k2;
+		return k1;
 	}
 
-	void Splay(Node* v) {
-		while (v->GetParrent() != nullptr) {
-			if (v == v->GetParrent()->GetLeft())
-				if (v->GetParrent()->GetParrent() == nullptr)
-					RotateRight(v->GetParrent());
-				else if (v->GetParrent() == v->GetParrent()->GetParrent()->GetLeft()) {
-					RotateRight(v->GetParrent()->GetParrent());
-					RotateRight(v->GetParrent());
+	TreeNode* ZigZigRotate(TreeNode* k2)
+	{
+		TreeNode* k1 = k2->right_;
+		k2->right_ = k1->left_;
+		k1->left_ = k2;
+		return k1;
+	}
+
+	TreeNode* Splay(int data, TreeNode* root)
+	{
+		if (!root)
+			return NULL;
+		TreeNode header;
+		TreeNode* LeftTreeMax = &header;
+		TreeNode* RightTreeMin = &header;
+		while (1)
+		{
+			if (data < root->data_)
+			{
+				if (!root->left_)
+					break;
+				if (data < root->left_->data_)
+				{
+					root = ZagZagRotate(root);
+					if (!root->left_)
+						break;
 				}
-				else {
-					RotateRight(v->GetParrent());
-					RotateLeft(v->GetParrent());
-				}
-			else {
-				if (v->GetParrent()->GetParrent() == nullptr)
-					RotateLeft(v->GetParrent());
-				else if (v->GetParrent() == v->GetParrent()->GetParrent()->GetRight()) {
-					RotateLeft(v->GetParrent()->GetParrent());
-					RotateLeft(v->GetParrent());
-				}
-				else {
-					RotateLeft(v->GetParrent());
-					RotateRight(v->GetParrent());
-				}
+				RightTreeMin->left_ = root;
+				RightTreeMin = RightTreeMin->left_;
+				root = root->left_;
+				RightTreeMin->left_ = NULL;
 			}
+			else if (data > root->data_)
+			{
+				if (!root->right_)
+					break;
+				if (data > root->right_->data_)
+				{
+					root = ZigZigRotate(root);
+					if (!root->right_)
+						break;
+				}
+				LeftTreeMax->right_ = root;
+				LeftTreeMax = LeftTreeMax->right_;
+				root = root->right_;
+				LeftTreeMax->right_ = NULL;
+			}
+			else
+				break;
+		}
+		LeftTreeMax->right_ = root->left_;
+		RightTreeMin->left_ = root->right_;
+		root->left_ = header.right_;
+		root->right_ = header.left_;
+		return root;
+	}
+
+	TreeNode* Insert(int data, TreeNode* root)
+	{
+		static TreeNode* p_node = NULL;
+		if (!p_node)
+			p_node = new TreeNode(data);
+		else
+			p_node->data_ = data;
+		if (!root)
+		{
+			root = p_node;
+			p_node = NULL;
+			return root;
+		}
+		root = Splay(data, root);
+		if (data < root->data_)
+		{
+			p_node->left_ = root->left_;
+			p_node->right_ = root;
+			root->left_ = NULL;
+			root = p_node;
+		}
+		else if (data > root->data_)
+		{
+			p_node->right_ = root->right_;
+			p_node->left_ = root;
+			root->right_ = NULL;
+			root = p_node;
+		}
+		else
+			return root;
+		p_node = NULL;
+		return root;
+	}
+
+	TreeNode* Delete(int data, TreeNode* root)//delete node
+	{
+		TreeNode* temp;
+		if (!root)//if tree is empty
+			return NULL;
+		root = Splay(data, root);
+		if (data != root->data_)//if tree has one item
+			return root;
+		else
+		{
+			if (!root->left_)
+			{
+				temp = root;
+				root = root->right_;
+			}
+			else
+			{
+				temp = root;
+				root = Splay(data, root->left_);
+				root->right_ = temp->right_;
+			}
+			free(temp);
+			return root;
 		}
 	}
 
-	TreesPair Split(Node* x) {
-		Splay(x);
-		Node* left_subtree = root_->GetLeft();
-		Node* right_subtree = root_->GetRight();
-		TreesPair result = TreesPair();
-		result.first_tree_ = left_subtree;
-		result.second_tree_ = right_subtree;
-		return result;
+	TreeNode* Search(int data, TreeNode* root)//seraching
+	{
+		return Splay(data, root);
 	}
 
-	void Add(Node* x) {
-		if (root_ == nullptr) {
-			root_ = x;
-			return;
+	void InOrder(TreeNode* root)//inorder traversal
+	{
+		if (root)
+		{
+			InOrder(root->left_);
+			std::cout << "key: " << root->data_;
+			if (root->left_)
+				std::cout << " | left child: " << root->left_->data_;
+			if (root->right_)
+				std::cout << " | right child: " << root->right_->data_;
+			std::cout << "\n";
+			InOrder(root->right_);
 		}
-		TreesPair subtrees = Split(x);
-		root_ = x;
-		root_->SetLeft(subtrees.first_tree_);
-		root_->SetRight(subtrees.second_tree_);
-		return;
 	}
+
+	private:
+		TreeNode* root_;
 };
 
 
-int main() {
-	SplayTree* tree = new SplayTree();
-	tree->AddValue(23);
-	tree->AddValue(32);
+
+int main()
+{
+	SplayTree* st = new SplayTree();
+	TreeNode* root = nullptr;
+	root = st->Insert(100, root);
+	root = st->Insert(200, root);
+	root = st->Insert(10, root);
+	st->InOrder(root);
+
+	
 	return 0;
-}
+} 

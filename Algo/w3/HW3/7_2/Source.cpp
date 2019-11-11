@@ -172,14 +172,52 @@ public:
 			return CountNodes(node->left_) + CountNodes(node->right_);
 	}
 
-	TreeNode<T>* find(const T& data) {
-		TreeNode<T>* z = root_;
-		while (z) {
-			if (comp_(z->data_, data)) z = z->right_;
-			else if (comp_(data, z->data_)) z = z->left_;
-			else return z;
+	TreeNode<T>* find(const int& position) {
+		{
+			if (position > root_->myChildrenCount_+1) return nullptr;
+			return find_by_position(position, root_);
 		}
-		return nullptr;
+	}
+
+	TreeNode<T>* find_by_position(size_t position, TreeNode<T>* cur) {
+		if (position == cur->GetLeftChildrenCount() + 1) return cur;
+		if (position < cur->GetLeftChildrenCount()) {
+			return find_by_position(position, cur->left_);
+		}
+		else {
+			return find_by_position(position - cur->GetLeftChildrenCount() - 1, cur->right_);
+		}
+	}
+
+	void replace(TreeNode<T>* u, TreeNode<T>* v) {
+		if (!u->parent_) root_ = v;
+		else if (u == u->parent_->left_) u->parent_->left_ = v;
+		else u->parent_->right_ = v;
+		if (v) v->parent_ = u->parent_;
+	}
+
+	void Remove(const int& position) {
+		TreeNode<T>* z = find(position);
+		if (!z) return;
+		int tmp = z->myChildrenCount_;
+
+		Splay(z);
+
+		if (!z->left_) replace(z, z->right_);
+		else if (!z->right_) replace(z, z->left_);
+		else {
+			TreeNode<T>* y = GetMinimum(z->right_);
+			if (y->parent_ != z) {
+				replace(y, y->right_);
+				y->right_ = z->right_;
+				y->right_->parent_ = y;
+			}
+			replace(z, y);
+			y->left_ = z->left_;
+			y->left_->parent_ = y;
+		}
+
+		delete z;
 	}
 
 	const T& minimum() { return GetMinimum(root_)->data_; }
@@ -196,7 +234,8 @@ int main()
 	std::cout << st->insert(100);
 	std::cout << st->insert(200);
 	std::cout << st->insert(50);
-	std::cout << st->insert(30);
+	st->Remove(1);
+	std::cout << st->insert(50);
 	std::cout << st->insert(150);
 
 	delete st;

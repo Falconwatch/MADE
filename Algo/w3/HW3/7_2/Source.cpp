@@ -4,196 +4,181 @@
 В реализации используйте сплей деревья.
 */
 
+#include <functional>
 
+template<typename T>
+struct TreeNode {
+	TreeNode* left_, * right_;
+	TreeNode* parent_;
+	T key;
+	TreeNode(const T& init = T()) : left_(nullptr), right_(nullptr), parent_(nullptr), key(init) { }
+	~TreeNode() {
+		if (left_ != nullptr) {
+			delete left_;
+		}
+		if (right_ != nullptr) {
+			delete right_;
+		}
 
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-using namespace std;
-class TreeNode//node declaration
-{
-	public:
-	int data_;
-	TreeNode* left_;
-	TreeNode* right_;
-
-	TreeNode(int data): data_(data) {
-		left_ = right_ = nullptr;
-	}
-
-	TreeNode(){
-		left_ = right_ = nullptr;
 	}
 };
 
-class SplayTree
-{
+template<typename T, typename Comp = std::less<T>>
+class SplayTree {
+private:
+	Comp comp_;
+	unsigned long p_size_;
+
+	TreeNode<T>* root_;
+
+	void LeftRotate(TreeNode<T>* x) {
+		TreeNode<T>* y = x->right_;
+		if (y) {
+			x->right_ = y->left_;
+			if (y->left_) y->left_->parent_ = x;
+			y->parent_ = x->parent_;
+		}
+
+		if (!x->parent_) root_ = y;
+		else if (x == x->parent_->left_) x->parent_->left_ = y;
+		else x->parent_->right_ = y;
+		if (y) y->left_ = x;
+		x->parent_ = y;
+	}
+
+	void RightRotate(TreeNode<T>* x) {
+		TreeNode<T>* y = x->left_;
+		if (y) {
+			x->left_ = y->right_;
+			if (y->right_) y->right_->parent_ = x;
+			y->parent_ = x->parent_;
+		}
+		if (!x->parent_) root_ = y;
+		else if (x == x->parent_->left_) x->parent_->left_ = y;
+		else x->parent_->right_ = y;
+		if (y) y->right_ = x;
+		x->parent_ = y;
+	}
+
+	void Splay(TreeNode<T>* x) {
+		while (x->parent_) {
+			if (!x->parent_->parent_) {
+				if (x->parent_->left_ == x) RightRotate(x->parent_);
+				else LeftRotate(x->parent_);
+			}
+			else if (x->parent_->left_ == x && x->parent_->parent_->left_ == x->parent_) {
+				RightRotate(x->parent_->parent_);
+				RightRotate(x->parent_);
+			}
+			else if (x->parent_->right_ == x && x->parent_->parent_->right_ == x->parent_) {
+				LeftRotate(x->parent_->parent_);
+				LeftRotate(x->parent_);
+			}
+			else if (x->parent_->left_ == x && x->parent_->parent_->right_ == x->parent_) {
+				RightRotate(x->parent_);
+				LeftRotate(x->parent_);
+			}
+			else {
+				LeftRotate(x->parent_);
+				RightRotate(x->parent_);
+			}
+		}
+	}
+
+	void Replace(TreeNode<T>* u, TreeNode<T>* v) {
+		if (!u->parent_) root_ = v;
+		else if (u == u->parent_->left_) u->parent_->left_ = v;
+		else u->parent_->right_ = v;
+		if (v) v->parent_ = u->parent_;
+	}
+
+	TreeNode<T>* GetMinimum(TreeNode<T>* u) {
+		while (u->left_) u = u->left_;
+		return u;
+	}
+
+	TreeNode<T>* GetMaximum(TreeNode<T>* u) {
+		while (u->right_) u = u->right_;
+		return u;
+	}
 public:
-
+	SplayTree() : root_(nullptr), p_size_(0) { }
 	~SplayTree() {
-		delete root_;
+		if (root_ != nullptr) {
+			delete root_;
+		}
 	}
 
-	TreeNode* ZagZagRotate(TreeNode* k2)
-	{
-		TreeNode* k1 = k2->left_;
-		k2->left_ = k1->right_;
-		k1->right_ = k2;
-		return k1;
+	void insert(const T& key) {
+		TreeNode<T>* z = root_;
+		TreeNode<T>* p = nullptr;
+
+		while (z) {
+			p = z;
+			if (comp_(z->key, key)) z = z->right_;
+			else z = z->left_;
+		}
+
+		z = new TreeNode<T>(key);
+		z->parent_ = p;
+
+		if (!p) root_ = z;
+		else if (comp_(p->key, z->key)) p->right_ = z;
+		else p->left_ = z;
+
+		Splay(z);
+		p_size_++;
 	}
 
-	TreeNode* ZigZigRotate(TreeNode* k2)
-	{
-		TreeNode* k1 = k2->right_;
-		k2->right_ = k1->left_;
-		k1->left_ = k2;
-		return k1;
+	TreeNode<T>* find(const T& key) {
+		TreeNode<T>* z = root_;
+		while (z) {
+			if (comp_(z->key, key)) z = z->right;
+			else if (comp_(key, z->key)) z = z->left;
+			else return z;
+		}
+		return nullptr;
 	}
 
-	TreeNode* Splay(int data, TreeNode* root)
-	{
-		if (!root)
-			return NULL;
-		TreeNode header;
-		TreeNode* LeftTreeMax = &header;
-		TreeNode* RightTreeMin = &header;
-		while (1)
-		{
-			if (data < root->data_)
-			{
-				if (!root->left_)
-					break;
-				if (data < root->left_->data_)
-				{
-					root = ZagZagRotate(root);
-					if (!root->left_)
-						break;
-				}
-				RightTreeMin->left_ = root;
-				RightTreeMin = RightTreeMin->left_;
-				root = root->left_;
-				RightTreeMin->left_ = NULL;
+	void erase(const T& key) {
+		TreeNode<T>* z = find(key);
+		if (!z) return;
+
+		Splay(z);
+
+		if (!z->left_) Replace(z, z->right_);
+		else if (!z->right_) Replace(z, z->left_);
+		else {
+			TreeNode<T>* y = GetMinimum(z->right_);
+			if (y->parent != z) {
+				Replace(y, y->right);
+				y->right = z->right_;
+				y->right->parent = y;
 			}
-			else if (data > root->data_)
-			{
-				if (!root->right_)
-					break;
-				if (data > root->right_->data_)
-				{
-					root = ZigZigRotate(root);
-					if (!root->right_)
-						break;
-				}
-				LeftTreeMax->right_ = root;
-				LeftTreeMax = LeftTreeMax->right_;
-				root = root->right_;
-				LeftTreeMax->right_ = NULL;
-			}
-			else
-				break;
+			Replace(z, y);
+			y->left = z->left_;
+			y->left->parent = y;
 		}
-		LeftTreeMax->right_ = root->left_;
-		RightTreeMin->left_ = root->right_;
-		root->left_ = header.right_;
-		root->right_ = header.left_;
-		return root;
+
+		delete z;
+		p_size_--;
 	}
 
-	TreeNode* Insert(int data, TreeNode* root)
-	{
-		static TreeNode* p_node = NULL;
-		if (!p_node)
-			p_node = new TreeNode(data);
-		else
-			p_node->data_ = data;
-		if (!root)
-		{
-			root = p_node;
-			p_node = NULL;
-			return root;
-		}
-		root = Splay(data, root);
-		if (data < root->data_)
-		{
-			p_node->left_ = root->left_;
-			p_node->right_ = root;
-			root->left_ = NULL;
-			root = p_node;
-		}
-		else if (data > root->data_)
-		{
-			p_node->right_ = root->right_;
-			p_node->left_ = root;
-			root->right_ = NULL;
-			root = p_node;
-		}
-		else
-			return root;
-		p_node = NULL;
-		return root;
-	}
 
-	TreeNode* Delete(int data, TreeNode* root)//delete node
-	{
-		TreeNode* temp;
-		if (!root)//if tree is empty
-			return NULL;
-		root = Splay(data, root);
-		if (data != root->data_)//if tree has one item
-			return root;
-		else
-		{
-			if (!root->left_)
-			{
-				temp = root;
-				root = root->right_;
-			}
-			else
-			{
-				temp = root;
-				root = Splay(data, root->left_);
-				root->right_ = temp->right_;
-			}
-			free(temp);
-			return root;
-		}
-	}
+	const T& minimum() { return GetMinimum(root_)->key; }
+	const T& maximum() { return GetMaximum(root_)->key; }
 
-	TreeNode* Search(int data, TreeNode* root)//seraching
-	{
-		return Splay(data, root);
-	}
-
-	void InOrder(TreeNode* root)//inorder traversal
-	{
-		if (root)
-		{
-			InOrder(root->left_);
-			std::cout << "key: " << root->data_;
-			if (root->left_)
-				std::cout << " | left child: " << root->left_->data_;
-			if (root->right_)
-				std::cout << " | right child: " << root->right_->data_;
-			std::cout << "\n";
-			InOrder(root->right_);
-		}
-	}
-
-	private:
-		TreeNode* root_;
+	bool empty() const { return root_ == nullptr; }
+	unsigned long size() const { return p_size_; }
 };
-
-
 
 int main()
 {
-	SplayTree* st = new SplayTree();
-	TreeNode* root = nullptr;
-	root = st->Insert(100, root);
-	root = st->Insert(200, root);
-	root = st->Insert(10, root);
-	st->InOrder(root);
+	SplayTree<int>* st = new SplayTree<int>();
+	st->insert(100);
+	st->insert(200);
+	st->insert(10);
 
-	
+	delete st;
 	return 0;
 } 

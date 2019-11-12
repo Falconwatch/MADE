@@ -33,7 +33,11 @@ struct TreeNode {
 		if (right_ != nullptr) {
 			delete right_;
 		}
+	}
 
+	void CutOff() {
+		left_ = nullptr;
+		right_ = nullptr;
 	}
 };
 
@@ -43,7 +47,7 @@ private:
 	Comp comp_;
 	unsigned long p_size_;
 
-	TreeNode<T>* root_;
+	
 
 	void LeftRotate(TreeNode<T>* x) {
 		TreeNode<T>* y = x->right_;
@@ -131,6 +135,7 @@ private:
 	}
 
 public:
+	TreeNode<T>* root_;
 	SplayTree() : root_(nullptr), p_size_(0) { }
 	~SplayTree() {
 		if (root_ != nullptr) {
@@ -172,51 +177,63 @@ public:
 			return CountNodes(node->left_) + CountNodes(node->right_);
 	}
 
-	TreeNode<T>* find(const int& position) {
-		{
-			if (position > root_->myChildrenCount_+1) return nullptr;
-			return find_by_position(position, root_);
-		}
+	TreeNode<T>* find_by_order(int order) {
+		if (root_ == nullptr) return nullptr;
+		if (order > root_->myChildrenCount_) return nullptr;
+		return find_by_order(order, root_);
 	}
 
-	TreeNode<T>* find_by_position(size_t position, TreeNode<T>* cur) {
-		if (position == cur->GetLeftChildrenCount() + 1) return cur;
-		if (position < cur->GetLeftChildrenCount()) {
-			return find_by_position(position, cur->left_);
+	TreeNode<T>* find_by_order(size_t order, TreeNode<T>* cur) {
+
+		if (order == cur->GetRightChildrenCount()) 
+			return cur;
+		if (order <= cur->GetRightChildrenCount()) {
+			return find_by_order(order, cur->right_);
 		}
 		else {
-			return find_by_position(position - cur->GetLeftChildrenCount() - 1, cur->right_);
+			return find_by_order(order - cur->GetRightChildrenCount()-1, cur->left_);
 		}
 	}
 
 	void replace(TreeNode<T>* u, TreeNode<T>* v) {
-		if (!u->parent_) root_ = v;
-		else if (u == u->parent_->left_) u->parent_->left_ = v;
-		else u->parent_->right_ = v;
-		if (v) v->parent_ = u->parent_;
+		if (!u->parent_) {
+			root_ = v;
+		}
+
+		else if (u == u->parent_->left_) 
+			u->parent_->left_ = v;
+		else 
+			u->parent_->right_ = v;
+		if (v) 
+			v->parent_ = u->parent_;
 	}
 
-	void Remove(const int& position) {
-		TreeNode<T>* z = find(position);
+	void Remove(int& position) {
+		TreeNode<T>* z = find_by_order(position);
 		if (!z) return;
-		int tmp = z->myChildrenCount_;
 
 		Splay(z);
+		
 
-		if (!z->left_) replace(z, z->right_);
-		else if (!z->right_) replace(z, z->left_);
+		if (!z->left_) 
+			replace(z, z->right_);
+		else if (!z->right_) 
+			replace(z, z->left_);
 		else {
 			TreeNode<T>* y = GetMinimum(z->right_);
 			if (y->parent_ != z) {
 				replace(y, y->right_);
 				y->right_ = z->right_;
 				y->right_->parent_ = y;
+				y->myChildrenCount_ += (z->right_->myChildrenCount_ + 1);
 			}
 			replace(z, y);
 			y->left_ = z->left_;
 			y->left_->parent_ = y;
+			y->myChildrenCount_ += (z->left_->myChildrenCount_ + 1);
 		}
 
+		z->CutOff();
 		delete z;
 	}
 
@@ -225,18 +242,56 @@ public:
 
 	bool empty() const { return root_ == nullptr; }
 	unsigned long size() const { return p_size_; }
+
+	void preOrder(TreeNode<T> * cur)
+	{
+		if (cur != NULL)
+		{
+			cout << cur->data_ << " ";
+			preOrder(cur->left_);
+			preOrder(cur->right_);
+		}
+	}
+
+	void Inorder(TreeNode<T>* cur)
+	{
+		if (!cur) return;
+		Inorder(cur->left_);
+		printf("v: %d ", cur->data_);
+		if (cur->left_) printf("l: %d ", cur->left_->data_);
+		if (cur->right_) printf("r: %d ", cur->right_->data_);
+		puts("");
+		Inorder(cur->right_);
+	}
 };
 
 int main()
 {
 	SplayTree<int>* st = new SplayTree<int>();
 	
-	std::cout << st->insert(100);
+	int n;
+	std::cin >> n;
+
+	for (int i = 0; i < n; i++) {
+		int k, r;
+		std::cin >> k >> r;
+		if (!(k < 1 || r < 0)) {
+			if (k == 1)
+				std::cout << st->insert(r) << std::endl;
+			if (k == 2)
+				st->Remove(r);
+			st->Inorder(st->root_);
+		}
+		
+	}
+
+
+
+	/*std::cout << st->insert(100);
 	std::cout << st->insert(200);
 	std::cout << st->insert(50);
 	st->Remove(1);
-	std::cout << st->insert(50);
-	std::cout << st->insert(150);
+	std::cout << st->insert(150);*/
 
 	delete st;
 	return 0;

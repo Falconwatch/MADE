@@ -1,0 +1,397 @@
+/*
+В одной военной части решили построить в одну шеренгу по росту. Т.к. часть была далеко не образцовая, то солдаты часто приходили не вовремя, а то их и вовсе приходилось выгонять из шеренги за плохо начищенные сапоги. Однако солдаты в процессе прихода и ухода должны были всегда быть выстроены по росту – сначала самые высокие, а в конце – самые низкие. За расстановку солдат отвечал прапорщик, который заметил интересную особенность – все солдаты в части разного роста.
+Ваша задача состоит в том, чтобы помочь прапорщику правильно расставлять солдат, а именно для каждого приходящего солдата указывать, перед каким солдатом в строе он должен становится. Требуемая скорость выполнения команды - O(log n) амортизационно.
+В реализации используйте сплей деревья.
+*/
+
+#include <functional>
+#include <iostream>
+
+using namespace std;
+
+template <typename T>
+struct Node {
+	Node<T>* left;
+	Node<T>* right;
+	Node<T>* parent;
+	Node<T>* next;
+	Node<T>* prev;
+	T key;
+
+	size_t size;
+
+	Node() {
+		left = nullptr;
+		right = nullptr;
+		parent = nullptr;
+		next = nullptr;
+		prev = nullptr;
+		size = 1;
+	}
+
+	Node(const T& a) : Node() {
+		key = a;
+	}
+
+	Node(const Node& b) = delete;
+};
+
+template <typename T>
+struct splay_tree {
+	Node<T>* root;
+
+	splay_tree() {
+		root = nullptr;
+	}
+
+	explicit splay_tree(Node<T>* root) {
+		this->root = root;
+	}
+
+	splay_tree(const splay_tree& b) = delete;
+
+	~splay_tree() {
+		dealoc(root);
+	}
+
+	void dealoc(Node<T>* cur) {
+		if (cur == nullptr) return;
+		if (cur->left == nullptr && cur->right == nullptr) {
+			delete cur;
+			return;
+		}
+
+		dealoc(cur->left);
+		dealoc(cur->right);
+		delete cur;
+	}
+
+	int insert(const T& key) {
+		if (root == nullptr) {
+			root = new Node<T>(key);
+			return 0;
+		}
+
+		Node<T>* res = find(key);
+
+		if (res->key == key) return 0;
+		if (key > res->key) {
+			res->right = new Node<T>(key);
+			res->right->parent = res;
+
+			if (res->next != nullptr)
+				res->next->prev = res->right;
+			res->right->next = res->next;
+
+			res->next = res->right;
+			res->right->prev = res;
+
+			splay(res->right);
+			return 0;
+		}
+		else {
+			res->left = new Node<T>(key);
+			res->left->parent = res;
+
+			if (res->prev != nullptr)
+				res->prev->next = res->left;
+			res->left->prev = res->prev;
+
+			res->prev = res->left;
+			res->left->next = res;
+
+			splay(res->left);
+			return 0;
+		}
+
+	}
+
+	void erase(const T& key) {
+		Node<T>* res = find_by_order(key);
+
+		if (res == nullptr || res->key != key) return;
+
+		Node<T>* tmp = res->prev;
+		if (res->prev != nullptr)
+			res->prev->next = res->next;
+		if (res->next != nullptr)
+			res->next->prev = tmp;
+
+		splay_tree<T>* R = split(key);
+
+		Node<T>* wasRoot = root;
+		root = wasRoot->left;
+		delete wasRoot;
+
+		if (root != nullptr)
+			root->parent = nullptr;
+
+
+		join(R);
+
+	}
+
+	bool exists(const T& key) {
+		Node<T>* res = find(key);
+
+		if (res == nullptr || res->key != key)
+			return 0;
+		else
+			return 1;
+	}
+
+	Node<T>* next(const T& key) {
+		Node<T>* res = find(key);
+
+		if (res == nullptr)
+			return nullptr;
+
+		Node<T>* ans = nullptr;
+
+		if (res->key > key) {
+			ans = res;
+		}
+		else if (res->key <= key) {
+			ans = res->next;
+		}
+
+		return ans;
+	}
+
+	Node<T>* prev(const T& key) {
+		Node<T>* res = find(key);
+
+		if (res == nullptr)
+			return nullptr;
+
+		Node<T>* ans = nullptr;
+
+		if (res->key < key) {
+			ans = res;
+		}
+		else if (res->key >= key) {
+			ans = res->prev;
+		}
+
+		return ans;
+	}
+
+	Node<T>* find_by_order(size_t order) {
+		if (order > size()) return nullptr;
+		return find_by_order(order, root);
+	}
+
+	Node<T>* find_by_key(const T& key) {
+		Node<T>* res = find(key);
+
+		if (res->key != key) return nullptr;
+		else return res;
+	}
+
+	size_t size() {
+		return size(root);
+	}
+
+	void Inorder(Node<T>* cur)
+	{
+		if (!cur) return;
+		Inorder(cur->left);
+		printf("v: %d ", cur->key);
+		if (cur->left) printf("l: %d ", cur->left->key);
+		if (cur->right) printf("r: %d ", cur->right->key);
+		puts("");
+		Inorder(cur->right);
+	}
+
+
+
+private:
+
+	Node<T>* find_by_order(size_t order, Node<T>* cur) {
+
+		if (order == size(cur->left) + 1) return cur;
+		if (order <= size(cur->left)) {
+			return find_by_order(order, cur->left);
+		}
+		else {
+			return find_by_order(order - size(cur->left) - 1, cur->right);
+		}
+	}
+
+	size_t size(Node<T>* cur) {
+		return (cur == nullptr) ? 0 : cur->size;
+	}
+
+	void fix_size(Node<T>* cur) {
+		if (cur != nullptr) {
+			cur->size = 1 + size(cur->left) + size(cur->right);
+		}
+	}
+
+	Node<T>* find(const T& key) {
+		if (root == nullptr) return nullptr;
+
+		Node<T>* cur = root;
+		while (true) {
+			if (key > cur->key) {
+				if (cur->right == nullptr) break;
+				else cur = cur->right;
+			}
+			else if (key < cur->key) {
+				if (cur->left == nullptr) break;
+				else cur = cur->left;
+			}
+			else {
+				break;
+			}
+		}
+
+		return cur;
+	}
+
+	void zig(Node<T>* cur) {
+		if (cur == nullptr) return;
+		if (cur->parent == nullptr) {
+			fix_size(cur);
+			return;
+		}
+		if (cur->parent->parent) {
+			if (cur->parent->parent->left == cur->parent) {
+				cur->parent->parent->left = cur;
+			}
+			else {
+				cur->parent->parent->right = cur;
+			}
+		}
+
+		if (cur->parent->left == cur) {
+			Node<T>* P = cur->parent;
+			Node<T>* R = cur->right;
+			cur->parent = P->parent;
+			cur->right = P;
+			P->parent = cur;
+			P->left = R;
+			if (R) {
+				R->parent = P;
+			}
+		}
+
+		else if (cur->parent->right == cur) {
+			Node<T>* P = cur->parent;
+			Node<T>* L = cur->left;
+			cur->parent = P->parent;
+			cur->left = P;
+			P->parent = cur;
+			P->right = L;
+			if (L) {
+				L->parent = P;
+			}
+		}
+
+		if (cur->parent == nullptr) {
+			root = cur;
+		}
+
+		fix_size(cur->left);
+		fix_size(cur->right);
+		fix_size(cur);
+	}
+
+	void splay(Node<T>* cur) {
+		if (cur == nullptr) return;
+		if (cur->parent == nullptr) {
+			fix_size(cur);
+			root = cur;
+			return;
+		}
+		if (cur->parent->parent == nullptr) {
+			zig(cur);
+			root = cur;
+			return;
+		}
+		zig(cur->parent);
+		zig(cur);
+		splay(cur);
+	}
+
+	splay_tree<T>* split(const T& key) {
+
+		Node<T>* res = find(key);
+
+		if (res == nullptr) return nullptr;
+
+		if (res->key != key) return nullptr;
+
+		splay(res);
+
+		Node<T>* R = root->right;
+		root->right = nullptr;
+		if (R != nullptr)
+			R->parent = nullptr;
+
+		fix_size(root);
+		return new splay_tree<T>(R);
+	}
+
+	void join(splay_tree<T>* R) {
+		if (root == nullptr && R->root == nullptr) {
+			delete R;
+			return;
+		}
+		splay(get_max());
+
+		if (root != nullptr) {
+			root->right = R->root;
+
+			if (root->right != nullptr)
+				root->right->parent = root;
+		}
+		else {
+			root = R->root;
+			root->parent = nullptr;
+		}
+		fix_size(root);
+
+		R->root = nullptr;
+		delete R;
+	}
+
+	Node<T>* get_max() {
+		Node<T>* cur = root;
+		if (cur == nullptr) return nullptr;
+		while (cur->right != nullptr) {
+			cur = cur->right;
+		}
+
+		return cur;
+	}
+
+
+};
+
+
+int main()
+{
+	splay_tree<int>* st = new splay_tree<int>();
+
+
+	int n;
+	std::cin >> n;
+
+	for (int i = 0; i < n; i++) {
+		int k, r;
+		std::cin >> k >> r;
+		if (!(k < 1 || r < 0)) {
+			if (k == 1)
+
+				std::cout << st->insert(r) << std::endl;
+			if (k == 2)
+				st->erase(r);
+			st->Inorder(st->root);
+		}
+
+	}
+
+	delete st;
+	return 0;
+}

@@ -265,34 +265,27 @@ public:
 	}
 };
 
-int main()
-{
-	SplayTree<int>* st = new SplayTree<int>();
-	
-	int n;
-	std::cin >> n;
-
-	for (int i = 0; i < n; i++) {
-		int k, r;
-		std::cin >> k >> r;
-		if (!(k < 1 || r < 0)) {
-			if (k == 1)
-				std::cout << st->insert(r) << std::endl;
-			if (k == 2)
-				st->Remove(r);
-			st->Inorder(st->root_);
-		}
-		
-	}
-
-
-
-	/*std::cout << st->insert(100);
-	std::cout << st->insert(200);
-	std::cout << st->insert(50);
-	st->Remove(1);
-	std::cout << st->insert(150);*/
-
-	delete st;
-	return 0;
-} 
+//int main()
+//{
+//	SplayTree<int>* st = new SplayTree<int>();
+//
+//
+//	int n;
+//	std::cin >> n;
+//
+//	for (int i = 0; i < n; i++) {
+//		int k, r;
+//		std::cin >> k >> r;
+//		if (!(k < 1 || r < 0)) {
+//			if (k == 1)
+//				std::cout << st->insert(r) << std::endl;
+//			if (k == 2)
+//				st->Remove(r);
+//			st->Inorder(st->root_);
+//		}
+//		
+//	}
+//
+//	delete st;
+//	return 0;
+//} 

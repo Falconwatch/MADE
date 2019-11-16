@@ -38,7 +38,7 @@ private:
 
 	int FirstHashFunction(string value);
 	int SecondHashFunction(string value);	   
-	void Rehash_(int new_size);
+	void Rehash(int new_size);
 };
 
 HashTable::HashTable() : buffer_size_(8), deleted_(0), filled_(0) {
@@ -80,7 +80,7 @@ bool HashTable::Add(string value) { // вставляет строку в таблицу
 		buffer_[i].empty = false;
 		filled_++;
 		if (filled_ >= 3 * buffer_size_ / 4)
-			Rehash_(buffer_size_ * 2);
+			Rehash(buffer_size_ * 2);
 		return true;
 	}
 	else {
@@ -128,7 +128,7 @@ int HashTable::SecondHashFunction(string value) {
 		return hash + 1;
 }
 
-void HashTable::Rehash_(int new_size) {
+void HashTable::Rehash(int new_size) {
 	vector<TreeNode> new_list;
 	new_list.resize(new_size);
 	buffer_size_ = new_size;

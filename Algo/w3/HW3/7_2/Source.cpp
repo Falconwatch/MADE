@@ -1,7 +1,9 @@
-п»ї/*
-Р’ РѕРґРЅРѕР№ РІРѕРµРЅРЅРѕР№ С‡Р°СЃС‚Рё СЂРµС€РёР»Рё РїРѕСЃС‚СЂРѕРёС‚СЊ РІ РѕРґРЅСѓ С€РµСЂРµРЅРіСѓ РїРѕ СЂРѕСЃС‚Сѓ. Рў.Рє. С‡Р°СЃС‚СЊ Р±С‹Р»Р° РґР°Р»РµРєРѕ РЅРµ РѕР±СЂР°Р·С†РѕРІР°СЏ, С‚Рѕ СЃРѕР»РґР°С‚С‹ С‡Р°СЃС‚Рѕ РїСЂРёС…РѕРґРёР»Рё РЅРµ РІРѕРІСЂРµРјСЏ, Р° С‚Рѕ РёС… Рё РІРѕРІСЃРµ РїСЂРёС…РѕРґРёР»РѕСЃСЊ РІС‹РіРѕРЅСЏС‚СЊ РёР· С€РµСЂРµРЅРіРё Р·Р° РїР»РѕС…Рѕ РЅР°С‡РёС‰РµРЅРЅС‹Рµ СЃР°РїРѕРіРё. РћРґРЅР°РєРѕ СЃРѕР»РґР°С‚С‹ РІ РїСЂРѕС†РµСЃСЃРµ РїСЂРёС…РѕРґР° Рё СѓС…РѕРґР° РґРѕР»Р¶РЅС‹ Р±С‹Р»Рё РІСЃРµРіРґР° Р±С‹С‚СЊ РІС‹СЃС‚СЂРѕРµРЅС‹ РїРѕ СЂРѕСЃС‚Сѓ вЂ“ СЃРЅР°С‡Р°Р»Р° СЃР°РјС‹Рµ РІС‹СЃРѕРєРёРµ, Р° РІ РєРѕРЅС†Рµ вЂ“ СЃР°РјС‹Рµ РЅРёР·РєРёРµ. Р—Р° СЂР°СЃСЃС‚Р°РЅРѕРІРєСѓ СЃРѕР»РґР°С‚ РѕС‚РІРµС‡Р°Р» РїСЂР°РїРѕСЂС‰РёРє, РєРѕС‚РѕСЂС‹Р№ Р·Р°РјРµС‚РёР» РёРЅС‚РµСЂРµСЃРЅСѓСЋ РѕСЃРѕР±РµРЅРЅРѕСЃС‚СЊ вЂ“ РІСЃРµ СЃРѕР»РґР°С‚С‹ РІ С‡Р°СЃС‚Рё СЂР°Р·РЅРѕРіРѕ СЂРѕСЃС‚Р°.
-Р’Р°С€Р° Р·Р°РґР°С‡Р° СЃРѕСЃС‚РѕРёС‚ РІ С‚РѕРј, С‡С‚РѕР±С‹ РїРѕРјРѕС‡СЊ РїСЂР°РїРѕСЂС‰РёРєСѓ РїСЂР°РІРёР»СЊРЅРѕ СЂР°СЃСЃС‚Р°РІР»СЏС‚СЊ СЃРѕР»РґР°С‚, Р° РёРјРµРЅРЅРѕ РґР»СЏ РєР°Р¶РґРѕРіРѕ РїСЂРёС…РѕРґСЏС‰РµРіРѕ СЃРѕР»РґР°С‚Р° СѓРєР°Р·С‹РІР°С‚СЊ, РїРµСЂРµРґ РєР°РєРёРј СЃРѕР»РґР°С‚РѕРј РІ СЃС‚СЂРѕРµ РѕРЅ РґРѕР»Р¶РµРЅ СЃС‚Р°РЅРѕРІРёС‚СЃСЏ. РўСЂРµР±СѓРµРјР°СЏ СЃРєРѕСЂРѕСЃС‚СЊ РІС‹РїРѕР»РЅРµРЅРёСЏ РєРѕРјР°РЅРґС‹ - O(log n) Р°РјРѕСЂС‚РёР·Р°С†РёРѕРЅРЅРѕ.
-Р’ СЂРµР°Р»РёР·Р°С†РёРё РёСЃРїРѕР»СЊР·СѓР№С‚Рµ СЃРїР»РµР№ РґРµСЂРµРІСЊСЏ.
+/*
+7_2 Щербаков ИГорь MADE-11
+
+В одной военной части решили построить в одну шеренгу по росту. Т.к. часть была далеко не образцовая, то солдаты часто приходили не вовремя, а то их и вовсе приходилось выгонять из шеренги за плохо начищенные сапоги. Однако солдаты в процессе прихода и ухода должны были всегда быть выстроены по росту – сначала самые высокие, а в конце – самые низкие. За расстановку солдат отвечал прапорщик, который заметил интересную особенность – все солдаты в части разного роста.
+Ваша задача состоит в том, чтобы помочь прапорщику правильно расставлять солдат, а именно для каждого приходящего солдата указывать, перед каким солдатом в строе он должен становится. Требуемая скорость выполнения команды - O(log n) амортизационно.
+В реализации используйте сплей деревья.
 */
 
 #include <functional>
@@ -9,283 +11,331 @@
 
 using namespace std;
 
-template<typename T>
-struct TreeNode {
-	TreeNode* left_, * right_;
-	TreeNode* parent_;
+template <typename T>
+struct Node {
+	Node<T>* left_;
+	Node<T>* right_;
+	Node<T>* parent_;
+	Node<T>* next_;
+	Node<T>* prev_;
 	T data_;
-	int myChildrenCount_;
-	int GetRightChildrenCount() {
-		if (right_ == nullptr) return 0;
-		else return right_->myChildrenCount_+1;
-	}
 
-	int GetLeftChildrenCount() {
-		if (left_==nullptr) return 0;
-		else return left_->myChildrenCount_+1;
-	}
+	size_t size_;
 
-	TreeNode(const T& init = T()) : left_(nullptr), right_(nullptr), parent_(nullptr), data_(init), myChildrenCount_(0){ }
-	~TreeNode() {
-		if (left_ != nullptr) {
-			delete left_;
-		}
-		if (right_ != nullptr) {
-			delete right_;
-		}
-	}
-
-	void CutOff() {
+	Node() {
 		left_ = nullptr;
 		right_ = nullptr;
+		parent_ = nullptr;
+		next_ = nullptr;
+		prev_ = nullptr;
+		size_ = 1;
 	}
+
+	Node(const T& a) : Node() {
+		data_ = a;
+	}
+
+	Node(const Node& b) = delete;
 };
 
-template<typename T, typename Comp = std::less<T>>
-class SplayTree {
+template <typename T>
+struct SplayTree {
+	Node<T>* root_;
+
+	SplayTree() {
+		root_ = nullptr;
+	}
+
+	explicit SplayTree(Node<T>* root) {
+		this->root_ = root;
+	}
+
+	SplayTree(const SplayTree& b) = delete;
+
+	~SplayTree() {
+		DeleteSubtree(root_);
+	}
+
+	void DeleteSubtree(Node<T>* cur) {
+		if (cur == nullptr) return;
+		if (cur->left_ == nullptr && cur->right_ == nullptr) {
+			delete cur;
+			return;
+		}
+
+		DeleteSubtree(cur->left_);
+		DeleteSubtree(cur->right_);
+		delete cur;
+	}
+
+	int Insert(const T& data) {
+		if (root_ == nullptr) {
+			root_ = new Node<T>(data);
+			return 0;
+		}
+
+		Node<T>* res = Find(data);
+
+
+		if (data > res->data_) {
+			Node<T>* new_node = new Node<T>(data);
+			res->right_ = new_node;
+			res->right_->parent_ = res;
+
+			if (res->next_ != nullptr)
+				res->next_->prev_ = res->right_;
+			res->right_->next_ = res->next_;
+
+			res->next_ = res->right_;
+			res->right_->prev_ = res;
+
+			Splay(res->right_);
+			return GetSize(root_->right_);
+		}
+		else {
+			Node<T>* new_node = new Node<T>(data);
+			res->left_ = new_node;
+			res->left_->parent_ = res;
+
+			if (res->prev_ != nullptr)
+				res->prev_->next_ = res->left_;
+			res->left_->prev_ = res->prev_;
+
+			res->prev_ = res->left_;
+			res->left_->next_ = res;
+
+			Splay(res->left_);
+			return GetSize(root_->right_);
+		}
+
+	}
+
+	void Remove(int position) {
+		Node<T>* res = FindByPosition(position);
+
+
+		Node<T>* tmp = res->prev_;
+		if (res->prev_ != nullptr)
+			res->prev_->next_ = res->next_;
+		if (res->next_ != nullptr)
+			res->next_->prev_ = tmp;
+
+		SplayTree<T>* R = Split(res);
+
+		Node<T>* wasRoot = root_;
+		root_ = wasRoot->left_;
+		delete wasRoot;
+
+		if (root_ != nullptr)
+			root_->parent_ = nullptr;
+
+
+		join(R);
+
+	}
+
+	Node<T>* GetPrev(const T& data) {
+		Node<T>* res = Find(data);
+
+		if (res == nullptr)
+			return nullptr;
+
+		Node<T>* ans = nullptr;
+
+		if (res->data_ < data) {
+			ans = res;
+		}
+		else if (res->data_ >= data) {
+			ans = res->prev_;
+		}
+
+		return ans;
+	}
+
+	Node<T>* FindByPosition(int position) {
+		if (position > GetSize()) return nullptr;
+		return FindByPosition(position, root_);
+	}
+
+	int GetSize() {
+		return GetSize(root_);
+	}
+
+
+
 private:
-	Comp comp_;
-	unsigned long p_size_;
+	Node<T>* FindByPosition(int order, Node<T>* cur) {
 
-	
-
-	void LeftRotate(TreeNode<T>* x) {
-		TreeNode<T>* y = x->right_;
-		if (y) {
-			x->right_ = y->left_;
-			if (y->left_) { 
-				y->left_->parent_ = x;
-			}
-			//СЃС‡РёС‚Р°РµРј РґРµС‚РµР№
-			int tmp = x->myChildrenCount_;
-			x->myChildrenCount_ -= (y->GetRightChildrenCount()+1); //РёРєСЃ РїРѕС‚РµСЂСЏР» РґРµС‚РµР№ РїСЂР°РІРѕР№РіРѕ СЂРµР±С‘РЅРєР° РёРіСЂРµРєР° Рё СЃР°Рј РёРіСЂРµРє
-			y->myChildrenCount_ = tmp; //РёРіСЂРµРє РїСЂРёРѕР±СЂС‘Р» РІСЃРµС… РґРµР№ РёРєСЃР°
-
-			y->parent_ = x->parent_;
+		if (order == GetSize(cur->right_)) return cur;
+		if (order < GetSize(cur->right_)) {
+			return FindByPosition(order, cur->right_);
 		}
-
-		if (!x->parent_) root_ = y;
-		else if (x == x->parent_->left_) x->parent_->left_ = y;
-		else x->parent_->right_ = y;
-		if (y) y->left_ = x;
-		x->parent_ = y;
+		else {
+			return FindByPosition(order - GetSize(cur->right_) - 1, cur->left_);
+		}
 	}
 
-	void RightRotate(TreeNode<T>* x) {
-		TreeNode<T>* y = x->left_;
-		if (y) {
-			x->left_ = y->right_;
-			if (y->right_) { 
-				y->right_->parent_ = x; 
-			}
-			//СЃС‡РёС‚Р°РµРј РґРµС‚РµР№
-			int tmp = x->myChildrenCount_;
-			x->myChildrenCount_ -= (y->GetLeftChildrenCount()+1); //РёРєСЃ РїРѕС‚РµСЂСЏР» РґРµС‚РµР№ Р»РµРІРѕРіРѕ СЂРµР±С‘РЅРєР° РёРіСЂРµРєР° Рё СЃР°Рј РёРіСЂРµРє
-			y->myChildrenCount_ = tmp; //РёРіСЂРµРє РїСЂРёРѕР±СЂС‘Р» РІСЃРµС… РґРµР№ РёРєСЃР°
-
-			y->parent_ = x->parent_;
-		}
-		if (!x->parent_) root_ = y;
-		else if (x == x->parent_->left_) x->parent_->left_ = y;
-		else x->parent_->right_ = y;
-		if (y) y->right_ = x;
-		x->parent_ = y;
+	int GetSize(Node<T>* cur) {
+		return (cur == nullptr) ? 0 : cur->size_;
 	}
 
-	void Splay(TreeNode<T>* x) {
-		while (x->parent_) {
-			if (!x->parent_->parent_) {
-				if (x->parent_->left_ == x) RightRotate(x->parent_);
-				else LeftRotate(x->parent_);
+	void RepairSize(Node<T>* cur) {
+		if (cur != nullptr) {
+			cur->size_ = 1 + GetSize(cur->left_) + GetSize(cur->right_);
+		}
+	}
+
+	Node<T>* Find(const T& data) {
+		if (root_ == nullptr) return nullptr;
+
+		Node<T>* cur = root_;
+		while (true) {
+			if (data > cur->data_) {
+				if (cur->right_ == nullptr) break;
+				else cur = cur->right_;
 			}
-			else if (x->parent_->left_ == x && x->parent_->parent_->left_ == x->parent_) {
-				RightRotate(x->parent_->parent_);
-				RightRotate(x->parent_);
-			}
-			else if (x->parent_->right_ == x && x->parent_->parent_->right_ == x->parent_) {
-				LeftRotate(x->parent_->parent_);
-				LeftRotate(x->parent_);
-			}
-			else if (x->parent_->left_ == x && x->parent_->parent_->right_ == x->parent_) {
-				RightRotate(x->parent_);
-				LeftRotate(x->parent_);
+			else if (data < cur->data_) {
+				if (cur->left_ == nullptr) break;
+				else cur = cur->left_;
 			}
 			else {
-				LeftRotate(x->parent_);
-				RightRotate(x->parent_);
+				break;
 			}
 		}
+
+		return cur;
 	}
 
-	void Replace(TreeNode<T>* u, TreeNode<T>* v) {
-		if (!u->parent_) root_ = v;
-		else if (u == u->parent_->left_) u->parent_->left_ = v;
-		else u->parent_->right_ = v;
-		if (v) v->parent_ = u->parent_;
+	void Zig(Node<T>* cur) {
+		if (cur == nullptr) return;
+		if (cur->parent_ == nullptr) {
+			RepairSize(cur);
+			return;
+		}
+		if (cur->parent_->parent_) {
+			if (cur->parent_->parent_->left_ == cur->parent_) {
+				cur->parent_->parent_->left_ = cur;
+			}
+			else {
+				cur->parent_->parent_->right_ = cur;
+			}
+		}
+
+		if (cur->parent_->left_ == cur) {
+			Node<T>* P = cur->parent_;
+			Node<T>* R = cur->right_;
+			cur->parent_ = P->parent_;
+			cur->right_ = P;
+			P->parent_ = cur;
+			P->left_ = R;
+			if (R) {
+				R->parent_ = P;
+			}
+		}
+
+		else if (cur->parent_->right_ == cur) {
+			Node<T>* P = cur->parent_;
+			Node<T>* L = cur->left_;
+			cur->parent_ = P->parent_;
+			cur->left_ = P;
+			P->parent_ = cur;
+			P->right_ = L;
+			if (L) {
+				L->parent_ = P;
+			}
+		}
+
+		if (cur->parent_ == nullptr) {
+			root_ = cur;
+		}
+
+		RepairSize(cur->left_);
+		RepairSize(cur->right_);
+		RepairSize(cur);
 	}
 
-	TreeNode<T>* GetMinimum(TreeNode<T>* u) {
-		while (u->left_) u = u->left_;
-		return u;
+	void Splay(Node<T>* cur) {
+		if (cur == nullptr) return;
+		if (cur->parent_ == nullptr) {
+			RepairSize(cur);
+			root_ = cur;
+			return;
+		}
+		if (cur->parent_->parent_ == nullptr) {
+			Zig(cur);
+			root_ = cur;
+			return;
+		}
+		Zig(cur->parent_);
+		Zig(cur);
+		Splay(cur);
 	}
 
-	TreeNode<T>* GetMaximum(TreeNode<T>* u) {
-		while (u->right_) u = u->right_;
-		return u;
+	SplayTree<T>* Split(Node<T>* res) {
+
+		Splay(res);
+
+		Node<T>* R = root_->right_;
+		root_->right_ = nullptr;
+		if (R != nullptr)
+			R->parent_ = nullptr;
+
+		RepairSize(root_);
+		return new SplayTree<T>(R);
 	}
 
-public:
-	TreeNode<T>* root_;
-	SplayTree() : root_(nullptr), p_size_(0) { }
-	~SplayTree() {
+	void join(SplayTree<T>* R) {
+		if (root_ == nullptr && R->root_ == nullptr) {
+			delete R;
+			return;
+		}
+		Splay(GetMaxNode());
+
 		if (root_ != nullptr) {
-			delete root_;
-		}
-	}
+			root_->right_ = R->root_;
 
-	int insert(const T& key) {
-		TreeNode<T>* z = root_;
-		TreeNode<T>* p = nullptr;
-
-		while (z) {
-			z->myChildrenCount_ += 1;
-			p = z;
-			if (comp_(z->data_, key)) z = z->right_;
-			else z = z->left_;
-			
-		}
-
-		z = new TreeNode<T>(key);
-		z->parent_ = p;
-
-		if (!p) root_ = z;
-		else if (comp_(p->data_, z->data_)) p->right_ = z;
-		else p->left_ = z;
-
-		Splay(z);
-		p_size_++;
-		return root_->GetRightChildrenCount();
-	}
-
-	int CountNodes(TreeNode<T>* node)
-	{
-		if (node == NULL)
-			return 0;
-		if (node->left_ == NULL && node->right_ == NULL)
-			return 1;
-		else
-			return CountNodes(node->left_) + CountNodes(node->right_);
-	}
-
-	TreeNode<T>* find_by_order(int order) {
-		if (root_ == nullptr) return nullptr;
-		if (order > root_->myChildrenCount_) return nullptr;
-		return find_by_order(order, root_);
-	}
-
-	TreeNode<T>* find_by_order(size_t order, TreeNode<T>* cur) {
-
-		if (order == cur->GetRightChildrenCount()) 
-			return cur;
-		if (order <= cur->GetRightChildrenCount()) {
-			return find_by_order(order, cur->right_);
+			if (root_->right_ != nullptr)
+				root_->right_->parent_ = root_;
 		}
 		else {
-			return find_by_order(order - cur->GetRightChildrenCount()-1, cur->left_);
+			root_ = R->root_;
+			root_->parent_ = nullptr;
 		}
+		RepairSize(root_);
+
+		R->root_ = nullptr;
+		delete R;
 	}
 
-	void replace(TreeNode<T>* u, TreeNode<T>* v) {
-		if (!u->parent_) {
-			root_ = v;
+	Node<T>* GetMaxNode() {
+		Node<T>* cur = root_;
+		if (cur == nullptr) return nullptr;
+		while (cur->right_ != nullptr) {
+			cur = cur->right_;
 		}
-
-		else if (u == u->parent_->left_) 
-			u->parent_->left_ = v;
-		else 
-			u->parent_->right_ = v;
-		if (v) 
-			v->parent_ = u->parent_;
-	}
-
-	void Remove(int& position) {
-		TreeNode<T>* z = find_by_order(position);
-		if (!z) return;
-
-		Splay(z);
-		
-
-		if (!z->left_) 
-			replace(z, z->right_);
-		else if (!z->right_) 
-			replace(z, z->left_);
-		else {
-			TreeNode<T>* y = GetMinimum(z->right_);
-			if (y->parent_ != z) {
-				replace(y, y->right_);
-				y->right_ = z->right_;
-				y->right_->parent_ = y;
-				y->myChildrenCount_ += (z->right_->myChildrenCount_ + 1);
-			}
-			replace(z, y);
-			y->left_ = z->left_;
-			y->left_->parent_ = y;
-			y->myChildrenCount_ += (z->left_->myChildrenCount_ + 1);
-		}
-
-		z->CutOff();
-		delete z;
-	}
-
-	const T& minimum() { return GetMinimum(root_)->data_; }
-	const T& maximum() { return GetMaximum(root_)->data_; }
-
-	bool empty() const { return root_ == nullptr; }
-	unsigned long size() const { return p_size_; }
-
-	void preOrder(TreeNode<T> * cur)
-	{
-		if (cur != NULL)
-		{
-			cout << cur->data_ << " ";
-			preOrder(cur->left_);
-			preOrder(cur->right_);
-		}
-	}
-
-	void Inorder(TreeNode<T>* cur)
-	{
-		if (!cur) return;
-		Inorder(cur->left_);
-		printf("v: %d ", cur->data_);
-		if (cur->left_) printf("l: %d ", cur->left_->data_);
-		if (cur->right_) printf("r: %d ", cur->right_->data_);
-		puts("");
-		Inorder(cur->right_);
+		return cur;
 	}
 };
 
-//int main()
-//{
-//	SplayTree<int>* st = new SplayTree<int>();
-//
-//
-//	int n;
-//	std::cin >> n;
-//
-//	for (int i = 0; i < n; i++) {
-//		int k, r;
-//		std::cin >> k >> r;
-//		if (!(k < 1 || r < 0)) {
-//			if (k == 1)
-//				std::cout << st->insert(r) << std::endl;
-//			if (k == 2)
-//				st->Remove(r);
-//			st->Inorder(st->root_);
-//		}
-//		
-//	}
-//
-//	delete st;
-//	return 0;
-//} 
+int main()
+{
+	SplayTree<int>* st = new SplayTree<int>();
+
+	int n;
+	std::cin >> n;
+
+	for (int i = 0; i < n; i++) {
+		int k, r;
+		std::cin >> k >> r;
+		if (!(k < 1 || r < 0)) {
+			if (k == 1)
+				std::cout << st->Insert(r) << std::endl;
+			if (k == 2)
+				st->Remove(r);
+		}
+
+	}
+
+	delete st;
+	return 0;
+}

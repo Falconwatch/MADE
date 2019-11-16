@@ -14,141 +14,143 @@ g(k, i)=g(k, i-1) + i (mod m). m - степень двойки.
 #include <iostream>
 #include <string>
 #include <vector>
-#include <cmath>
 
 using namespace std;
 
+struct TreeNode {
+	bool empty = true;
+	bool removed = false;
+	string s;
+};
+
 class HashTable {
 public:
-	HashTable(): size_(8){
-		table_.resize(size_);
-	}
-
-	bool Remove(string s) { 
-		int k1 = FirstHashFunction(s);
-		int k2 = SecondHashFunction(s);
-		int i = k1;
-		int j = 1;
-		while (!table_[i].empty and table_[i].s != s) {
-			i = (k1 + j * k2) % size_;
-			if (i == k1)
-				break;
-			++j;
-		}
-
-		if (!table_[i].empty and table_[i].s == s and !table_[i].removed) {
-			table_[i].removed = true;
-			++deleted_;
-			return true;
-		}
-		else
-			return false;
-	}
-
-	int Add(string s) { // вставл€ет строку в таблицу
-		int hash1 = FirstHashFunction(s);
-		int hash2 = SecondHashFunction(s);
-		int i = hash1;
-		int j = 1;
-		while (!table_[i].empty and table_[i].s != s) {
-			i = (hash1 + j * hash2) % size_;
-			++j;
-		}
-		if (table_[i].empty) {
-			table_[i].s = s;
-			table_[i].empty = false;
-			++filled_;
-			if (filled_ >= 3 * size_ / 4)
-				Rehash_(size_ * 2);
-			return 1;
-		}
-		else {
-			if (table_[i].removed == true) {
-				table_[i].removed = false;
-				--deleted_;
-				return 1;
-			}
-		}
-		return 0;
-	}
-
-	bool Find(string s) {
-		int hash1 = FirstHashFunction(s);
-		int hash2 = SecondHashFunction(s);
-		int i = hash1;
-		int j = 1;
-		while (!table_[i].empty and table_[i].s != s) {
-			i = (hash1 + j * hash2) % size_;
-			if (i == hash1)
-				break;
-			++j;
-		}
-
-		if (!table_[i].empty and table_[i].s == s and !table_[i].removed)
-			return true;
-		else
-			return false;
-	}
-
+	HashTable();
+	bool Remove(string value);
+	bool Add(string value);
+	bool Find(string value);
 private:
-	struct TreeNode { // €чейка таблицы;
-		bool empty = true; // хранитс€ ли в данной €чейка строка (возможно, удаленна€);
-		bool removed = false; // удалена ли строка, наход€ща€с€ в данной €чейке;
-		string s;
-	};
+	vector<TreeNode> buffer_;
+	int buffer_size_;
+	int filled_ = 0; 
+	int deleted_ = 0; 
+	int a_ = 1291;	
 
-	int size_;
-	int filled_ = 0; // кол-во €чеек с записанной информацией;
-	int deleted_ = 0; // кол-во удаленных €чеек, т.е. помеченных как deleted;
-
-	vector<TreeNode> table_; // буфер хеш-таблицы;
-	vector<int> primes_ = { 7, 79, 379, 3847, 62201, 382871, 2972969 }; // простые числа, которые при необходимости замен€т a_ - число, использующеес€ в хеш-функции;
-
-	int a_ = primes_[trunc(log10(8))]; // число a_ выбираетс€ из простых так, чтобы по разр€дности совпадать с размером буфера;
-
-	int FirstHashFunction(string value) { // перва€ хеш-функци€;
-		int res = 0;
-		for (int i = value.size() - 1; i >= 0; --i)
-			res = ((res + value[i]) * a_) % size_;
-		return res;
-	}
-
-	int SecondHashFunction(string value) { // втора€ хеш-функци€;
-		int res = 0;
-		for (int i = 0; i < value.size(); ++i)
-			res = ((res + value[i]) * a_) % size_;
-		if (res % 2)
-			return res;
-		else
-			return res + 1;
-	}
-
-	void Rehash_(int new_size) { // перехеширование;
-		vector<TreeNode> new_list;
-		new_list.resize(new_size);
-		size_ = new_size;
-		a_ = primes_[trunc(log10(new_size))];
-		filled_ -= deleted_;
-		deleted_ = 0;
-		for (int h = 0; h < table_.size(); ++h) {
-			if (!table_[h].empty and !table_[h].removed) {
-				int k1 = FirstHashFunction(table_[h].s);
-				int k2 = SecondHashFunction(table_[h].s);
-				int i = k1;
-				int j = 1;
-				while (!new_list[i].empty) {
-					i = (k1 + j * k2) % size_;
-					++j;
-				}
-				new_list[i].s = table_[h].s;
-				new_list[i].empty = false;
-			}
-		}
-
-		table_ = move(new_list);
-	}
-
+	int FirstHashFunction(string value);
+	int SecondHashFunction(string value);	   
+	void Rehash_(int new_size);
 };
+
+HashTable::HashTable() : buffer_size_(8), deleted_(0), filled_(0) {
+	buffer_.resize(buffer_size_);
+}
+
+bool HashTable::Remove(string value) {
+	int hash1 = FirstHashFunction(value);
+	int hash2 = SecondHashFunction(value);
+	int i = hash1;
+	int j = 1;
+	while (!buffer_[i].empty and buffer_[i].s != value) {
+		i = (hash1 + j * hash2) % buffer_size_;
+		if (i == hash1)
+			break;
+		j++;
+	}
+
+	if (!buffer_[i].empty and buffer_[i].s == value and !buffer_[i].removed) {
+		buffer_[i].removed = true;
+		deleted_++;
+		return true;
+	}
+	else
+		return false;
+}
+
+bool HashTable::Add(string value) { // вставл€ет строку в таблицу
+	int hash1 = FirstHashFunction(value);
+	int hash2 = SecondHashFunction(value);
+	int i = hash1;
+	int j = 1;
+	while (!buffer_[i].empty and buffer_[i].s != value) {
+		i = (hash1 + j * hash2) % buffer_size_;
+		j++;
+	}
+	if (buffer_[i].empty) {
+		buffer_[i].s = value;
+		buffer_[i].empty = false;
+		filled_++;
+		if (filled_ >= 3 * buffer_size_ / 4)
+			Rehash_(buffer_size_ * 2);
+		return true;
+	}
+	else {
+		if (buffer_[i].removed == true) {
+			buffer_[i].removed = false;
+			deleted_--;;
+			return true;
+		}
+	}
+	return false;
+}
+
+bool HashTable::Find(string value) {
+	int hash1 = FirstHashFunction(value);
+	int hash2 = SecondHashFunction(value);
+	int i = hash1;
+	int j = 1;
+	while (!buffer_[i].empty and buffer_[i].s != value) {
+		i = (hash1 + j * hash2) % buffer_size_;
+		if (i == hash1)
+			break;
+		j++;
+	}
+
+	if (!buffer_[i].empty and buffer_[i].s == value and !buffer_[i].removed)
+		return true;
+	else
+		return false;
+}
+
+int HashTable::FirstHashFunction(string value) {
+	int hash = 0;
+	for (int i = value.size() - 1; i >= 0; i--)
+		hash = ((hash + value[i]) * a_) % buffer_size_;
+	return hash;
+}
+
+int HashTable::SecondHashFunction(string value) {
+	int hash = 0;
+	for (int i = 0; i < value.size(); i++)
+		hash = ((hash + value[i]) * a_) % buffer_size_;
+	if (hash % 2)
+		return hash;
+	else
+		return hash + 1;
+}
+
+void HashTable::Rehash_(int new_size) {
+	vector<TreeNode> new_list;
+	new_list.resize(new_size);
+	buffer_size_ = new_size;
+	filled_ -= deleted_;
+	deleted_ = 0;
+	for (int h = 0; h < buffer_.size(); h++) {
+		if (!buffer_[h].empty and !buffer_[h].removed) {
+			int hash1 = FirstHashFunction(buffer_[h].s);
+			int hash2 = SecondHashFunction(buffer_[h].s);
+			int i = hash1;
+			int j = 1;
+			while (!new_list[i].empty) {
+				i = (hash1 + j * hash2) % buffer_size_;
+				j++;
+			}
+			new_list[i].s = buffer_[h].s;
+			new_list[i].empty = false;
+		}
+	}
+
+	buffer_ = move(new_list);
+}
 
 int main(){
 	HashTable* ht = new HashTable();

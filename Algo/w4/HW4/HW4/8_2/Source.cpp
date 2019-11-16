@@ -14,87 +14,141 @@ g(k, i)=g(k, i-1) + i (mod m). m - степень двойки.
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cmath>
 
 using namespace std;
 
-struct HashTableNode {
-	string data_;
-	HashTableNode* next = nullptr;
-	HashTableNode(string key) : data_(std::move(key)) {}
-};
-
 class HashTable {
 public:
-	HashTable();
-	~HashTable();
-	bool Has(const string& value);
-	bool Add(const string& value);
-	bool Remove(const string& value);
-private:
-	int Hash1(const string& value);
-	int Hash2(const string& value);
-	std::vector<HashTableNode*> table_;
-};
-
-HashTable::HashTable(): table_(8, nullptr) {};
-
-HashTable::~HashTable() {
-	for (HashTableNode* head : table_) {
-		while (head) {
-			HashTableNode* next = head->next;
-			delete head;
-			head = next;
-		}
+	HashTable(): size_(8){
+		table_.resize(size_);
 	}
-};
 
-bool HashTable::Has(const string& value) {
-	
-	const size_t hash = value[0] % table_.size();
-	for (auto head = table_[hash]; head != nullptr; head = head->next) {
-		if (head->data_ == value) {
+	bool Remove(string s) { 
+		int k1 = FirstHashFunction(s);
+		int k2 = SecondHashFunction(s);
+		int i = k1;
+		int j = 1;
+		while (!table_[i].empty and table_[i].s != s) {
+			i = (k1 + j * k2) % size_;
+			if (i == k1)
+				break;
+			++j;
+		}
+
+		if (!table_[i].empty and table_[i].s == s and !table_[i].removed) {
+			table_[i].removed = true;
+			++deleted_;
 			return true;
 		}
-	}
-	return false;
-}
-
-bool HashTable::Add(const string& value) {
-	const size_t hash = value[0] % table_.size();
-	for (auto head = table_[hash]; head != nullptr; head = head->next) {
-		if (head->data_ == value) {
+		else
 			return false;
+	}
+
+	int Add(string s) { // вставл€ет строку в таблицу
+		int hash1 = FirstHashFunction(s);
+		int hash2 = SecondHashFunction(s);
+		int i = hash1;
+		int j = 1;
+		while (!table_[i].empty and table_[i].s != s) {
+			i = (hash1 + j * hash2) % size_;
+			++j;
 		}
+		if (table_[i].empty) {
+			table_[i].s = s;
+			table_[i].empty = false;
+			++filled_;
+			if (filled_ >= 3 * size_ / 4)
+				Rehash_(size_ * 2);
+			return 1;
+		}
+		else {
+			if (table_[i].removed == true) {
+				table_[i].removed = false;
+				--deleted_;
+				return 1;
+			}
+		}
+		return 0;
 	}
-	HashTableNode* new_node = new HashTableNode(value);
-	new_node->next = table_[hash];
-	table_[hash] = new_node;
-	return true;
-}
 
-bool HashTable::Remove(const string& value) {
+	bool Find(string s) {
+		int hash1 = FirstHashFunction(s);
+		int hash2 = SecondHashFunction(s);
+		int i = hash1;
+		int j = 1;
+		while (!table_[i].empty and table_[i].s != s) {
+			i = (hash1 + j * hash2) % size_;
+			if (i == hash1)
+				break;
+			++j;
+		}
 
-	const size_t hash = value[0] % table_.size();
-	HashTableNode*& head = table_[hash];
-	if (!head) return false;
-	if (head->data_ == value) {
-		HashTableNode* to_delete = head;
-		head = head->next;
-		delete to_delete;
-		return true;
-	}
-	HashTableNode* parent = head;
-	for (; parent->next != nullptr; parent = parent->next) {
-		if (parent->next->data_ == value) {
-			HashTableNode* to_delete = parent->next;
-			parent->next = parent->next->next;
-			delete to_delete;
+		if (!table_[i].empty and table_[i].s == s and !table_[i].removed)
 			return true;
-		}
+		else
+			return false;
 	}
-	return false;
-}
 
+private:
+	struct TreeNode { // €чейка таблицы;
+		bool empty = true; // хранитс€ ли в данной €чейка строка (возможно, удаленна€);
+		bool removed = false; // удалена ли строка, наход€ща€с€ в данной €чейке;
+		string s;
+	};
+
+	int size_;
+	int filled_ = 0; // кол-во €чеек с записанной информацией;
+	int deleted_ = 0; // кол-во удаленных €чеек, т.е. помеченных как deleted;
+
+	vector<TreeNode> table_; // буфер хеш-таблицы;
+	vector<int> primes_ = { 7, 79, 379, 3847, 62201, 382871, 2972969 }; // простые числа, которые при необходимости замен€т a_ - число, использующеес€ в хеш-функции;
+
+	int a_ = primes_[trunc(log10(8))]; // число a_ выбираетс€ из простых так, чтобы по разр€дности совпадать с размером буфера;
+
+	int FirstHashFunction(string value) { // перва€ хеш-функци€;
+		int res = 0;
+		for (int i = value.size() - 1; i >= 0; --i)
+			res = ((res + value[i]) * a_) % size_;
+		return res;
+	}
+
+	int SecondHashFunction(string value) { // втора€ хеш-функци€;
+		int res = 0;
+		for (int i = 0; i < value.size(); ++i)
+			res = ((res + value[i]) * a_) % size_;
+		if (res % 2)
+			return res;
+		else
+			return res + 1;
+	}
+
+	void Rehash_(int new_size) { // перехеширование;
+		vector<TreeNode> new_list;
+		new_list.resize(new_size);
+		size_ = new_size;
+		a_ = primes_[trunc(log10(new_size))];
+		filled_ -= deleted_;
+		deleted_ = 0;
+		for (int h = 0; h < table_.size(); ++h) {
+			if (!table_[h].empty and !table_[h].removed) {
+				int k1 = FirstHashFunction(table_[h].s);
+				int k2 = SecondHashFunction(table_[h].s);
+				int i = k1;
+				int j = 1;
+				while (!new_list[i].empty) {
+					i = (k1 + j * k2) % size_;
+					++j;
+				}
+				new_list[i].s = table_[h].s;
+				new_list[i].empty = false;
+			}
+		}
+
+		table_ = move(new_list);
+	}
+
+};
 
 int main(){
 	HashTable* ht = new HashTable();
@@ -103,7 +157,7 @@ int main(){
 	while (std::cin >> command >> value) {
 		switch (command) {
 		case '?':
-			std::cout << (ht->Has(value) ? "OK" : "FAIL") << std::endl;
+			std::cout << (ht->Find(value) ? "OK" : "FAIL") << std::endl;
 			break;
 		case '+':
 			std::cout << (ht->Add(value) ? "OK" : "FAIL") << std::endl;

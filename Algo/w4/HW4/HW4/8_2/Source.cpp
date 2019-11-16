@@ -31,6 +31,8 @@ public:
 	bool Add(const string& value);
 	bool Remove(const string& value);
 private:
+	int Hash1(const string& value);
+	int Hash2(const string& value);
 	std::vector<HashTableNode*> table_;
 };
 

@@ -12,7 +12,8 @@
 using namespace std;
 
 template <typename T>
-struct Node {
+class Node {
+public:
 	Node<T>* left_;
 	Node<T>* right_;
 	Node<T>* parent_;
@@ -34,23 +35,20 @@ struct Node {
 	Node(const T& a) : Node() {
 		data_ = a;
 	}
-
-	Node(const Node& b) = delete;
 };
 
 template <typename T>
-struct SplayTree {
+class SplayTree {
+public:
 	Node<T>* root_;
 
 	SplayTree() {
 		root_ = nullptr;
 	}
 
-	explicit SplayTree(Node<T>* root) {
+	SplayTree(Node<T>* root) {
 		this->root_ = root;
 	}
-
-	SplayTree(const SplayTree& b) = delete;
 
 	~SplayTree() {
 		DeleteSubtree(root_);
@@ -75,7 +73,6 @@ struct SplayTree {
 		}
 
 		Node<T>* res = Find(data);
-
 
 		if (data > res->data_) {
 			Node<T>* new_node = new Node<T>(data);
@@ -107,12 +104,10 @@ struct SplayTree {
 			Splay(res->left_);
 			return GetSize(root_->right_);
 		}
-
 	}
 
 	void Remove(int position) {
 		Node<T>* res = FindByPosition(position);
-
 
 		Node<T>* tmp = res->prev_;
 		if (res->prev_ != nullptr)
@@ -122,34 +117,28 @@ struct SplayTree {
 
 		SplayTree<T>* R = Split(res);
 
-		Node<T>* wasRoot = root_;
-		root_ = wasRoot->left_;
-		delete wasRoot;
+		Node<T>* root_old = root_;
+		root_ = root_old->left_;
+		delete root_old;
 
 		if (root_ != nullptr)
 			root_->parent_ = nullptr;
-
-
-		join(R);
-
+		Join(R);
 	}
 
 	Node<T>* GetPrev(const T& data) {
-		Node<T>* res = Find(data);
-
-		if (res == nullptr)
+		Node<T>* found = Find(data);
+		if (found == nullptr)
 			return nullptr;
+		Node<T>* result = nullptr;
 
-		Node<T>* ans = nullptr;
-
-		if (res->data_ < data) {
-			ans = res;
+		if (found->data_ < data) {
+			result = found;
 		}
-		else if (res->data_ >= data) {
-			ans = res->prev_;
+		else if (found->data_ >= data) {
+			result = found->prev_;
 		}
-
-		return ans;
+		return result;
 	}
 
 	Node<T>* FindByPosition(int position) {
@@ -160,8 +149,6 @@ struct SplayTree {
 	int GetSize() {
 		return GetSize(root_);
 	}
-
-
 
 private:
 	Node<T>* FindByPosition(int order, Node<T>* cur) {
@@ -272,39 +259,36 @@ private:
 	}
 
 	SplayTree<T>* Split(Node<T>* res) {
-
 		Splay(res);
-
 		Node<T>* R = root_->right_;
 		root_->right_ = nullptr;
 		if (R != nullptr)
 			R->parent_ = nullptr;
-
 		RepairSize(root_);
 		return new SplayTree<T>(R);
 	}
 
-	void join(SplayTree<T>* R) {
-		if (root_ == nullptr && R->root_ == nullptr) {
-			delete R;
+	void Join(SplayTree<T>* right_tree) {
+		if (root_ == nullptr && right_tree->root_ == nullptr) {
+			delete right_tree;
 			return;
 		}
 		Splay(GetMaxNode());
 
 		if (root_ != nullptr) {
-			root_->right_ = R->root_;
+			root_->right_ = right_tree->root_;
 
 			if (root_->right_ != nullptr)
 				root_->right_->parent_ = root_;
 		}
 		else {
-			root_ = R->root_;
+			root_ = right_tree->root_;
 			root_->parent_ = nullptr;
 		}
 		RepairSize(root_);
 
-		R->root_ = nullptr;
-		delete R;
+		right_tree->root_ = nullptr;
+		delete right_tree;
 	}
 
 	Node<T>* GetMaxNode() {
@@ -316,6 +300,7 @@ private:
 		return cur;
 	}
 };
+
 
 int main()
 {
@@ -333,9 +318,7 @@ int main()
 			if (k == 2)
 				st->Remove(r);
 		}
-
 	}
-
 	delete st;
 	return 0;
 }

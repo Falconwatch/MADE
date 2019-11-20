@@ -83,7 +83,7 @@ class Tree {
 		Tree<T, IsLess>();
 		~Tree<T, IsLess>();
 		void AddNode(const T& data);
-		vector<TreeNode<T>*> InOrder();
+		vector<T> InOrder();
 	private:
 		TreeNode<T>* root_;
 		IsLess isless_;
@@ -146,10 +146,10 @@ void Tree<T, IsLess>::AddNode(const T& data) {
 }
 
 template<class T, class IsLess>
- vector<TreeNode<T>*> Tree<T, IsLess>::InOrder() {
+ vector<T> Tree<T, IsLess>::InOrder() {
 	TreeNode<T>* current_node = root_;
 	stack<TreeNode<T>*> tmp_stack;
-	vector<TreeNode<T>*> result;
+	vector<T> result;
 	while (current_node != nullptr || tmp_stack.empty() == false)
 	{
 		while (current_node != nullptr)
@@ -159,7 +159,7 @@ template<class T, class IsLess>
 		}		
 		current_node = tmp_stack.top();
 		tmp_stack.pop();
-		result.push_back(current_node);
+		result.push_back(current_node->GetData());
 		current_node = current_node->GetRightChild();
 	} 
 	return result;
@@ -168,9 +168,9 @@ template<class T, class IsLess>
 
  template<class T, class IsLess>
 void ShowInOrder(Tree<T, IsLess>* tree) {
-	vector<TreeNode<T>*> res = tree->InOrder();
+	vector<T> res = tree->InOrder();
 	for (int i = 0; i < res.size(); i++) {
-		cout<<res[i]->GetData()<<" ";
+		cout<<res[i]<<" ";
 	}
 }
 

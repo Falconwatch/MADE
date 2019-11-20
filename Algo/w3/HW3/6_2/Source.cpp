@@ -82,7 +82,7 @@ class Tree {
 	public:
 		Tree<T, IsLess>();
 		~Tree<T, IsLess>();
-		void AddNode(T data);
+		void AddNode(const T& data);
 		vector<TreeNode<T>*> InOrder();
 	private:
 		TreeNode<T>* root_;
@@ -113,7 +113,7 @@ Tree<T, IsLess>::~Tree(){
 }
 
 template<class T, class IsLess>
-void Tree<T, IsLess>::AddNode(T data) {
+void Tree<T, IsLess>::AddNode(const T& data) {
 	//дерево пустое
 	if (root_ == nullptr) {
 		root_ = new TreeNode<T>(data);

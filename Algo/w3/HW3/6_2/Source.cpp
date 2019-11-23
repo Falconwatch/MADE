@@ -80,7 +80,7 @@ public:
 template<class T, class IsLess>
 class Tree {
 	public:
-		Tree<T, IsLess>();
+		Tree<T, IsLess>(IsLess isless);
 		~Tree<T, IsLess>();
 		void AddNode(const T& data);
 		vector<T> InOrder();
@@ -90,7 +90,7 @@ class Tree {
 };
 
 template<class T, class IsLess>
-Tree<T, IsLess>::Tree(): root_(nullptr) {}
+Tree<T, IsLess>::Tree(IsLess isless): root_(nullptr), isless_(isless) {}
 
 template<class T, class IsLess>
 Tree<T, IsLess>::~Tree(){
@@ -175,7 +175,7 @@ void ShowInOrder(Tree<T, IsLess>* tree) {
 }
 
 int main() {
-	Tree<int, IsLessInt>* myTree= new Tree<int, IsLessInt>();
+	Tree<int, IsLessInt>* myTree= new Tree<int, IsLessInt>(IsLessInt());
 	int n = 0;
 	cin >> n;
 	for (int i = 0; i < n; i++) {

@@ -15,11 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="huffman.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
     <ClCompile Include="Source.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Source1.cpp">
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Huffman.h">
       <Filter>Исходные файлы</Filter>
-    </ClCompile>
+    </ClInclude>
   </ItemGroup>
 </Project>

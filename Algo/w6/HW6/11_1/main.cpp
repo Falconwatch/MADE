@@ -10,13 +10,13 @@
 
 using namespace std;
 
-void addEdge(vector<int>* G, int u, int v)
+void AddEdge(vector<int>* G, int u, int v)
 {
 	G[u].push_back(v);
 	G[v].push_back(u);
 }
 
-int FindSortestCycle(vector<int>* G, int n)
+int FindShortestCycle(vector<int>* G, int n)
 {
 	int min_length = INT_MAX;
 
@@ -24,9 +24,8 @@ int FindSortestCycle(vector<int>* G, int n)
 		// расстояние неизвестно - бесконечное
 		vector<int> distances(n, INT_MAX);
 
-		
 		vector<int> parents(n, -1); // Родители
-		distances[i] = 0; // РАсстояние до самого себя - 0
+		distances[i] = 0; // Расстояние до самого себя - 0
 		queue<int> q;
 
 		// записываем начальную вершину
@@ -69,10 +68,11 @@ int main() {
 	for (int i = 0; i < m; i++) {
 		int u, v;
 		cin >> u >> v;
-		addEdge(G, u, v);
+		AddEdge(G, u, v);
 	}
 
-	cout << FindSortestCycle(G, n);
+	cout << FindShortestCycle(G, n);
 
+	//delete G;
 	return 0;
 }

@@ -94,21 +94,19 @@ void FindBridges(list<int>* G, int n, string path)
 	outfile.close();
 }
 
-int main() {
-
-	ifstream infile;
-	infile.open("bridges.in");
-	int n, m; 
-	infile >> n >> m;
-	list<int>* G = new list<int>[n];
-	for (int i = 0; i < m; i++) {
-		int u, v;
-		infile >> u >> v;
-		AddEdge(G, u - 1, v - 1);
-	}
-	infile.close();
-
-	FindBridges(G, n, "bridges.out");
-
-	return 0;
-}
+//int main() {
+//	ifstream infile;
+//	infile.open("bridges.in");
+//	int n, m; 
+//	infile >> n >> m;
+//	list<int>* G = new list<int>[n];
+//	for (int i = 0; i < m; i++) {
+//		int u, v;
+//		infile >> u >> v;
+//		AddEdge(G, u - 1, v - 1);
+//	}
+//	infile.close();
+//
+//	FindBridges(G, n, "bridges.out");
+//	return 0;
+//}

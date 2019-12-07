@@ -8,10 +8,10 @@
 
 using namespace std;
 
-vector<vector<int> > graph;
+vector<vector<int> > G;
 vector<int> used, d, up;
 set<int> Bridges;
-map<pair<int, int>, int> mp;
+map<pair<int, int>, int> edge_numbers;
 
 pair<int, int> Edge(int a, int b)
 {
@@ -26,9 +26,9 @@ void dfs(int v, int p = -1)
 	int i, to;
 	used[v] = 1;
 	d[v] = up[v] = time++;
-	for (i = 0; i < graph[v].size(); i++)
+	for (i = 0; i < G[v].size(); i++)
 	{
-		to = graph[v][i];
+		to = G[v][i];
 		if (to == p)  continue;
 		if (used[to])
 			up[v] = min(up[v], d[to]);
@@ -36,7 +36,7 @@ void dfs(int v, int p = -1)
 		{
 			dfs(to, v);
 			up[v] = min(up[v], up[to]);
-			if (up[to] > d[v]) Bridges.insert(mp[Edge(v, to)]);
+			if (up[to] > d[v]) Bridges.insert(edge_numbers[Edge(v, to)]);
 		}
 	}
 }
@@ -54,14 +54,14 @@ int main() {
 	infile.open("bridges.in");
 	int n, m;
 	infile >> n >> m;
-	graph.resize(n + 1); used.resize(n + 1);
+	G.resize(n + 1); used.resize(n + 1);
 	d.resize(n + 1); up.resize(n + 1);
 	for (int i = 1; i <= m; i++)
 	{
 		int a, b;
 		infile >> a >> b;
-		graph[a].push_back(b); graph[b].push_back(a);
-		mp[Edge(a, b)] = i;
+		G[a].push_back(b); G[b].push_back(a);
+		edge_numbers[Edge(a, b)] = i;
 	}
 	infile.close();
 
@@ -75,6 +75,7 @@ int main() {
 	{
 		outfile << *iter << endl;
 	}
+	outfile.close();
 
 
 	return 0;

@@ -102,36 +102,36 @@ int GetNum(vector<vector<int>> edge_numbers, int u, int v) {
 	return -1;
 }
 
-int main() {
-	ifstream infile;
-	infile.open("bridges.in");
-	int n, m;
-	infile >> n >> m;
-	list<int>* G = new list<int>[n];
-
-	vector<vector<int>> edge_numbers;
-	int total_edged = 0;
-
-	for (int i = 0; i < m; i++) {
-		int u, v;
-		infile >> u >> v;
-		AddEdge(G, u - 1, v - 1);
-		edge_numbers.push_back(vector<int>({ u - 1,v - 1,++total_edged }));
-	}
-	infile.close();
-
-	vector<vector<int>> r = FindBridges(G, n);
-	ofstream outfile;
-	outfile.open("bridges.out");
-	for (int i = 0; i < r.size(); i++) {
-		if (i == 0) {
-			outfile << r[i][0] <<endl;
-		}
-		else {
-			outfile << GetNum(edge_numbers, r[i][0], r[i][1]) << endl;
-		}
-	}
-	outfile.close();
-	 
-	return 0;
-}
+//int main() {
+//	ifstream infile;
+//	infile.open("bridges.in");
+//	int n, m;
+//	infile >> n >> m;
+//	list<int>* G = new list<int>[n];
+//
+//	vector<vector<int>> edge_numbers;
+//	int total_edged = 0;
+//
+//	for (int i = 0; i < m; i++) {
+//		int u, v;
+//		infile >> u >> v;
+//		AddEdge(G, u - 1, v - 1);
+//		edge_numbers.push_back(vector<int>({ u - 1,v - 1,++total_edged }));
+//	}
+//	infile.close();
+//
+//	vector<vector<int>> r = FindBridges(G, n);
+//	ofstream outfile;
+//	outfile.open("bridges.out");
+//	for (int i = 0; i < r.size(); i++) {
+//		if (i == 0) {
+//			outfile << r[i][0] <<endl;
+//		}
+//		else {
+//			outfile << GetNum(edge_numbers, r[i][0], r[i][1]) << endl;
+//		}
+//	}
+//	outfile.close();
+//	 
+//	return 0;
+//}

@@ -9,86 +9,97 @@
 using namespace std;
 
 
+class Graph {
+public:
+	Graph(int n) {
+		g_.resize(n + 1); used_.resize(n + 1);
+		d_.resize(n + 1); up_.resize(n + 1);
+		edges_added = 0;
+	};
 
+	void AddEdge(int a, int b) {
+		g_[a].push_back(b); g_[b].push_back(a);
+		edge_numbers[CreateEdge(a, b)].push_back(++edges_added);
+	}
 
-
-vector<vector<int> > G;
-vector<int> used, d, up;
-set<int> Bridges;
-map<pair<int, int>, vector<int>> edge_numbers;
-
-pair<int, int> Edge(int a, int b)
-{
-	if (a > b) swap(a, b);
-	return make_pair(a, b);
-}
-
-
-void dfs(int v, int p = -1)
-{
-	static int time = 1;
-	int i, to;
-	used[v] = 1;
-	d[v] = up[v] = time++;
-	for (i = 0; i < G[v].size(); i++)
+	set<int> FindBridges()
 	{
-		to = G[v][i];
-		if (to == p)  continue;
-		if (used[to])
-			up[v] = min(up[v], d[to]);
-		else
-		{
-			dfs(to, v);
-			up[v] = min(up[v], up[to]);
-			if (up[to] > d[v]) {
-				vector<int> one_edge_numbers = edge_numbers[Edge(v, to)];
-				if (one_edge_numbers.size() == 1) //если ребро кратное, то не мост!
-				{
-					Bridges.insert(one_edge_numbers[0]);
-				}
+		int n = g_.size();
+		for (int i = 1; i < n; i++)
+			if (!used_[i]) 
+				DFS(i);
+		return Bridges;
+	}
 
-				
+private:
+	vector<vector<int>> g_;
+	vector<int> used_, d_, up_;
+	set<int> Bridges;
+	map<pair<int, int>, vector<int>> edge_numbers;
+	int edges_added;
+
+	pair<int, int> CreateEdge(int a, int b)
+	{
+		if (a > b) swap(a, b);
+		return make_pair(a, b);
+	}
+
+	void DFS(int v, int p = -1)
+	{
+		static int time = 1;
+		int i, to;
+		used_[v] = 1;
+		d_[v] = up_[v] = time++;
+		for (i = 0; i < g_[v].size(); i++)
+		{
+			to = g_[v][i];
+			if (to == p)  continue;
+			if (used_[to])
+				up_[v] = min(up_[v], d_[to]);
+			else
+			{
+				DFS(to, v);
+				up_[v] = min(up_[v], up_[to]);
+				if (up_[to] > d_[v]) {
+					vector<int> one_edge_numbers = edge_numbers[CreateEdge(v, to)];
+					if (one_edge_numbers.size() == 1) //если ребро кратное, то не мост!
+					{
+						Bridges.insert(one_edge_numbers[0]);
+					}
+				}
 			}
 		}
 	}
-}
+};
 
-void FindBridges(int n)
-{
-	int i;
-
-	for (i = 1; i <= n; i++)
-		if (!used[i]) dfs(i);
-}
 
 int main() {
+	//читаем
 	ifstream infile;
 	infile.open("bridges.in");
 	int n, m;
 	infile >> n >> m;
-	G.resize(n + 1); used.resize(n + 1);
-	d.resize(n + 1); up.resize(n + 1);
+	Graph G(n);
 	for (int i = 1; i <= m; i++)
 	{
 		int a, b;
 		infile >> a >> b;
-		G[a].push_back(b); G[b].push_back(a);
-		edge_numbers[Edge(a, b)].push_back(i);
+		G.AddEdge(a, b);
 	}
 	infile.close();
 
-	FindBridges(n);
+	//считаем
+	set<int> Bridges = G.FindBridges();
 
+	//выводим
 	ofstream outfile;
 	outfile.open("bridges.out");
 	outfile << Bridges.size() << endl;
-	
 	for ( set<int>::iterator iter = Bridges.begin(); iter != Bridges.end(); iter++)
 	{
 		outfile << *iter << endl;
 	}
 	outfile.close();
-
 
 	return 0;
 }

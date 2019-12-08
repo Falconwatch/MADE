@@ -10,70 +10,66 @@
 
 using namespace std;
 
-
 class Graph {
 public: 
-	Graph(int size) {
-		G.resize(size + 1);
+	Graph(int size);
+	void AddEdge(int u, int v);
+	int FindShortestCycle(int n);
+private:
+	vector<vector<int>> G;
+};
 
-	}
+Graph::Graph(int size) {
+	G.resize(size + 1);
+}
 
-	void AddEdge(int u, int v)
-	{
-		G[u].push_back(v);
-		G[v].push_back(u);
-	}
+void Graph::AddEdge(int u, int v)
+{
+	G[u].push_back(v);
+	G[v].push_back(u);
+}
 
+int Graph::FindShortestCycle(int n)
+{
+	int min_length = INT_MAX;
 
-	int FindShortestCycle(int n)
-	{
-		int min_length = INT_MAX;
+	for (int i = 0; i < n; i++) {
+		// рассто€ние неизвестно - бесконечное
+		vector<int> distances(n, INT_MAX);
 
-		for (int i = 0; i < n; i++) {
-			// рассто€ние неизвестно - бесконечное
-			vector<int> distances(n, INT_MAX);
+		vector<int> parents(n, -1); // –одители
+		distances[i] = 0; // –ассто€ние до самого себ€ - 0
+		queue<int> q;
 
-			vector<int> parents(n, -1); // –одители
-			distances[i] = 0; // –ассто€ние до самого себ€ - 0
-			queue<int> q;
+		// записываем начальную вершину
+		q.push(i);
 
-			// записываем начальную вершину
-			q.push(i);
-
-			while (!q.empty()) {
-				int x = q.front();
-				q.pop();
-				// обходим детей
-				for (int child : G[x]) {
-					//если ещЄ не посещали
-					if (distances[child] == INT_MAX) {
-						// новое рассто€ние
-						distances[child] = 1 + distances[x];
-						parents[child] = x;
-						q.push(child);
-					}
-					// уже посещали
-					else if (parents[x] != child and parents[child] != x) {
-						int distance = distances[x] + distances[child] + 1;
-						if (min_length > distance) {
-							min_length = distance;
-						}
+		while (!q.empty()) {
+			int x = q.front();
+			q.pop();
+			// обходим детей
+			for (int child : G[x]) {
+				//если ещЄ не посещали
+				if (distances[child] == INT_MAX) {
+					// новое рассто€ние
+					distances[child] = 1 + distances[x];
+					parents[child] = x;
+					q.push(child);
+				}
+				// уже посещали
+				else if (parents[x] != child and parents[child] != x) {
+					int distance = distances[x] + distances[child] + 1;
+					if (min_length > distance) {
+						min_length = distance;
 					}
 				}
 			}
 		}
-		if (min_length == INT_MAX)
-			return -1;
-		return min_length;
 	}
-
-private:
-	vector<vector<int>> G;
-
-};
-
-
-
+	if (min_length == INT_MAX)
+		return -1;
+	return min_length;
+}
 
 int main() {
 	int n, m; //n-количество вершин

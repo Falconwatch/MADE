@@ -8,10 +8,14 @@
 
 using namespace std;
 
+
+
+
+
 vector<vector<int> > G;
 vector<int> used, d, up;
 set<int> Bridges;
-map<pair<int, int>, int> edge_numbers;
+map<pair<int, int>, vector<int>> edge_numbers;
 
 pair<int, int> Edge(int a, int b)
 {
@@ -36,7 +40,15 @@ void dfs(int v, int p = -1)
 		{
 			dfs(to, v);
 			up[v] = min(up[v], up[to]);
-			if (up[to] > d[v]) Bridges.insert(edge_numbers[Edge(v, to)]);
+			if (up[to] > d[v]) {
+				vector<int> one_edge_numbers = edge_numbers[Edge(v, to)];
+				if (one_edge_numbers.size() == 1) //если ребро кратное, то не мост!
+				{
+					Bridges.insert(one_edge_numbers[0]);
+				}
+
+				
+			}
 		}
 	}
 }
@@ -61,7 +73,7 @@ int main() {
 		int a, b;
 		infile >> a >> b;
 		G[a].push_back(b); G[b].push_back(a);
-		edge_numbers[Edge(a, b)] = i;
+		edge_numbers[Edge(a, b)].push_back(i);
 	}
 	infile.close();
 

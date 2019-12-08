@@ -80,17 +80,17 @@ public:
 template<class T, class IsLess>
 class Tree {
 	public:
-		Tree<T, IsLess>();
+		Tree<T, IsLess>(IsLess isless);
 		~Tree<T, IsLess>();
-		void AddNode(T data);
-		vector<TreeNode<T>*> InOrder();
+		void AddNode(const T& data);
+		vector<T> InOrder();
 	private:
 		TreeNode<T>* root_;
 		IsLess isless_;
 };
 
 template<class T, class IsLess>
-Tree<T, IsLess>::Tree(): root_(nullptr) {}
+Tree<T, IsLess>::Tree(IsLess isless): root_(nullptr), isless_(isless) {}
 
 template<class T, class IsLess>
 Tree<T, IsLess>::~Tree(){
@@ -113,7 +113,7 @@ Tree<T, IsLess>::~Tree(){
 }
 
 template<class T, class IsLess>
-void Tree<T, IsLess>::AddNode(T data) {
+void Tree<T, IsLess>::AddNode(const T& data) {
 	//дерево пустое
 	if (root_ == nullptr) {
 		root_ = new TreeNode<T>(data);
@@ -146,10 +146,10 @@ void Tree<T, IsLess>::AddNode(T data) {
 }
 
 template<class T, class IsLess>
- vector<TreeNode<T>*> Tree<T, IsLess>::InOrder() {
+ vector<T> Tree<T, IsLess>::InOrder() {
 	TreeNode<T>* current_node = root_;
 	stack<TreeNode<T>*> tmp_stack;
-	vector<TreeNode<T>*> result;
+	vector<T> result;
 	while (current_node != nullptr || tmp_stack.empty() == false)
 	{
 		while (current_node != nullptr)
@@ -159,7 +159,7 @@ template<class T, class IsLess>
 		}		
 		current_node = tmp_stack.top();
 		tmp_stack.pop();
-		result.push_back(current_node);
+		result.push_back(current_node->GetData());
 		current_node = current_node->GetRightChild();
 	} 
 	return result;
@@ -168,14 +168,14 @@ template<class T, class IsLess>
 
  template<class T, class IsLess>
 void ShowInOrder(Tree<T, IsLess>* tree) {
-	vector<TreeNode<T>*> res = tree->InOrder();
+	vector<T> res = tree->InOrder();
 	for (int i = 0; i < res.size(); i++) {
-		cout<<res[i]->GetData()<<" ";
+		cout<<res[i]<<" ";
 	}
 }
 
 int main() {
-	Tree<int, IsLessInt>* myTree= new Tree<int, IsLessInt>();
+	Tree<int, IsLessInt>* myTree= new Tree<int, IsLessInt>(IsLessInt());
 	int n = 0;
 	cin >> n;
 	for (int i = 0; i < n; i++) {

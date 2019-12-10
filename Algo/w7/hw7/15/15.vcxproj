@@ -18,19 +18,10 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="position.cpp" />
-    <ClCompile Include="puzzle8.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="position.hpp" />
-    <ClInclude Include="puzzle8.hpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{F925BC90-A480-48D3-91CD-ED20D2905B4F}</ProjectGuid>
-    <RootNamespace>My13</RootNamespace>
+    <ProjectGuid>{AF4C9861-CF0A-415F-B32A-9AB93685B35E}</ProjectGuid>
+    <RootNamespace>My15</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -131,6 +122,9 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Source.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

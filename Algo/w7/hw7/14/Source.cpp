@@ -1,99 +1,55 @@
-// C++ program for Kruskal's algorithm to find Minimum 
-// Spanning Tree of a given connected, undirected and 
-// weighted graph 
-
+/*
+Щербаков Игорь, MADE-11
+Задача 14-2
+Дан неориентированный связный граф. Требуется найти вес минимального остовного дерева в этом графе.
+С помощью алгоритма Крускала.
+*/
 #include<algorithm>
 #include<vector>
 #include<iostream>
 
 using namespace std;
 
-// Creating shortcut for an integer pair 
+// ребро с весом
 typedef  pair<int, int> Edge;
-
-// Structure to represent a graph 
-class Graph
-{
+ 
+class Graph {
 public:
-	// Constructor 
-	Graph(int V, int E)
-	{
-		this->V = V;
-		this->E = E;
-	}
-
-	// Utility function to add an edge 
-	void addEdge(int u, int v, int w)
-	{
-		edges.push_back({ w, {u, v} });
-	}
-
-	// Function to find MST using Kruskal's 
-	// MST algorithm 
-	int kruskalMST();
-
+	Graph(int V, int E);
+	void AddEdge(int u, int v, int w);
+	int FindMST();
 private:
-	int V, E;
-	vector< pair<int, Edge> > edges;
+	int vertices_number_, edges_number_;
+	vector<pair<int, Edge>> edges;
 };
 
-// To represent Disjoint Sets 
-class DisjointSets
+// граф разбитый на подграфы
+class Components
 {
 public:
-
-	DisjointSets(int n):
-		n(n)
-	{
-		parent = new int[n + 1];
-		rnk = new int[n + 1];
- 
-		for (int i = 0; i <= n; i++)
-		{
-			rnk[i] = 0;
-			parent[i] = i;
-		}
-	}
-
-	// Find the parent of a node 'u' 
-	// Path Compression 
-	int Find(int u)
-	{
-		/* Make the parent of the nodes in the path
-		   from u--> parent[u] point to parent[u] */
-		if (u != parent[u])
-			parent[u] = Find(parent[u]);
-		return parent[u];
-	}
-
-	// Union by rank 
-	void Merge(int x, int y)
-	{
-		x = Find(x), y = Find(y);
-
-		/* Make tree with smaller height
-		   a subtree of the other tree  */
-		if (rnk[x] > rnk[y])
-			parent[y] = x;
-		else // If rnk[x] <= rnk[y] 
-			parent[x] = y;
-
-		if (rnk[x] == rnk[y])
-			rnk[y]++;
-	}
-
+	Components(int n);
+	int Find(int u);
+	void Merge(int x, int y);
 private:
-	int* parent, * rnk;
+	int* parents, * ranks;
 	int n;
 };
 
-int Graph::kruskalMST()
+#pragma region Graph
+Graph::Graph(int V, int E) : vertices_number_(V), edges_number_(E){}
+
+void Graph::AddEdge(int u, int v, int w)
+{
+	edges.push_back({ w,{u,v} });
+}
+
+int Graph::FindMST()
 {
 	int mst_weight = 0; 
 
 	sort(edges.begin(), edges.end());
 
-	DisjointSets ds(V);
+	Components ds(vertices_number_);
 
 	//проходимся по рёбрам
 	vector< pair<int, Edge> >::iterator it;
@@ -117,6 +73,43 @@ int Graph::kruskalMST()
 
 	return mst_weight;
 }
+#pragma endregion
+
+#pragma region Components
+Components::Components(int n) : n(n)
+{
+	parents = new int[n + 1];
+	ranks = new int[n + 1];
+
+	for (int i = 0; i <= n; i++)
+	{
+		ranks[i] = 0;
+		parents[i] = i;
+	}
+}
+
+int Components::Find(int u)
+{
+	//ищем родителя заданной вершины рекурсивно
+	if (u != parents[u])
+		parents[u] = Find(parents[u]);
+	return parents[u];
+}
+
+void Components::Merge(int x, int y)
+{
+	x = Find(x), y = Find(y);
+
+	//присоединяем маньшее дерево к большему
+	if (ranks[x] > ranks[y])
+		parents[y] = x;
+	else
+		parents[x] = y;
+
+	if (ranks[x] == ranks[y])
+		ranks[y]++;
+}
+#pragma endregion
 
 int main()
 {
@@ -127,10 +120,10 @@ int main()
 	int u, v, w;
 	for (int i = 0; i < m; i++) {
 		cin >> u >> v >> w;
-		g.addEdge(u, v, w);
+		g.AddEdge(u, v, w);
 	}
 	   
-	int mst_wt = g.kruskalMST();
+	int mst_wt = g.FindMST();
 	cout << mst_wt;
 
 	return 0;

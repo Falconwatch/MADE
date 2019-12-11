@@ -1,94 +1,74 @@
-#include <time.h>
-#include <stdlib.h>
-#include <vector>
-#include <string>
-#include <iostream>
-class p15 {
-public:
-	void play() {
-		bool p = true;
-		std::string a;
-		while (p) {
-			createBrd();
-			while (!isDone()) { drawBrd(); getMove(); }
-			drawBrd();
-			std::cout << "\n\nCongratulations!\nPlay again (Y/N)?";
-			std::cin >> a; if (a != "Y" && a != "y") break;
-		}
+#include<vector>
+#include<algorithm>
+#include<random>
+#include<iostream>
+#include<math.h>
+#include"Graph.h"
+#include<time.h>
+#include <numeric>
+
+const double M_PI = 3.141592653589793238462643383279502884;
+
+using namespace std;
+
+pair<double, double> estimateStatistics(vector<double> arr)
+{
+	double mean = accumulate(arr.begin(), arr.end(), 0.0 / arr.size());
+
+	double sqDiff = 0;
+	for (int i = 0; i < arr.size(); i++)
+		sqDiff += (arr[i] - mean) * (arr[i] - mean);
+	double var = sqDiff / arr.size();
+	
+	return { mean, var };
+}
+
+vector<pair<double, double>> GetPoints(int N){
+	std::default_random_engine generator;
+	uniform_real_distribution<> dis(0.0, 1.0);
+	
+	vector<pair<double, double>> result;
+	double x, y;
+	for (int i = 0; i < N; i++) {
+		x = dis(generator);
+		y = dis(generator);
+		double z0 = cos(2 * M_PI * x) * sqrt(-2* log(x));
+		double z1 = cos(2 * M_PI * y) * sqrt(-2 * log(y));
+		result.push_back({ z0,z1 });
 	}
-private:
-	void createBrd() {
-		int i = 1; std::vector<int> v;
-		for (; i < 16; i++) { brd[i - 1] = i; }
-		brd[15] = 0; x = y = 3;
-		for (i = 0; i < 1000; i++) {
-			getCandidates(v);
-			move(v[rand() % v.size()]);
-			v.clear();
-		}
+	
+	return result;
+}
+
+//возвращает отношение аденого пути к оптимальному
+double FindRoute(int n) {
+	vector<pair<double, double>> points = GetPoints(n);
+	Graph G(n, n * (n - 1) / 2);
+	for (auto p : points) {
+		G.AddVertice(p.first, p.second);
 	}
-	void move(int d) {
-		int t = x + y * 4;
-		switch (d) {
-		case 1: y--; break;
-		case 2: x++; break;
-		case 4: y++; break;
-		case 8: x--;
-		}
-		brd[t] = brd[x + y * 4];
-		brd[x + y * 4] = 0;
+
+	auto mst = G.FindMST();
+	auto brute = G.BruteForce();
+	return mst/brute;
+}
+
+//возвращает среднее время выполнения и стандартное отклонение
+pair<double, double> Experiment(int n_points, int n_itterations = 20) {
+	//здесь храним продолжительности прогонов
+	vector<double> spen_time;
+	for (int i = 0; i < n_itterations; i++) {
+		spen_time.push_back(FindRoute(n_points));
 	}
-	void getCandidates(std::vector<int>& v) {
-		if (x < 3) v.push_back(2); if (x > 0) v.push_back(8);
-		if (y < 3) v.push_back(4); if (y > 0) v.push_back(1);
+
+	return estimateStatistics(spen_time);
+}
+
+int main() {
+	int n_experiments = 1;
+	vector<pair<double,double>> times;
+	for (int n_points = 8; n_points < 9; n_points++) {
+		times.push_back(Experiment(n_points, 1));
 	}
-	void drawBrd() {
-		int r; std::cout << "\n\n";
-		for (int y = 0; y < 4; y++) {
-			std::cout << "+----+----+----+----+\n";
-			for (int x = 0; x < 4; x++) {
-				r = brd[x + y * 4];
-				std::cout << "| ";
-				if (r < 10) std::cout << " ";
-				if (!r) std::cout << "  ";
-				else std::cout << r << " ";
-			}
-			std::cout << "|\n";
-		}
-		std::cout << "+----+----+----+----+\n";
-	}
-	void getMove() {
-		std::vector<int> v; getCandidates(v);
-		std::vector<int> p; getTiles(p, v); unsigned int i;
-		while (true) {
-			std::cout << "\nPossible moves: ";
-			for (i = 0; i < p.size(); i++) std::cout << p[i] << " ";
-			int z; std::cin >> z;
-			for (i = 0; i < p.size(); i++)
-				if (z == p[i]) { move(v[i]); return; }
-		}
-	}
-	void getTiles(std::vector<int>& p, std::vector<int>& v) {
-		for (unsigned int t = 0; t < v.size(); t++) {
-			int xx = x, yy = y;
-			switch (v[t]) {
-			case 1: yy--; break;
-			case 2: xx++; break;
-			case 4: yy++; break;
-			case 8: xx--;
-			}
-			p.push_back(brd[xx + yy * 4]);
-		}
-	}
-	bool isDone() {
-		for (int i = 0; i < 15; i++) {
-			if (brd[i] != i + 1) return false;
-		}
-		return true;
-	}
-	int brd[16], x, y;
-};
-int main(int argc, char* argv[]) {
-	srand((unsigned)time(0));
-	p15 p; p.play(); return 0;
+	return 0;
 }

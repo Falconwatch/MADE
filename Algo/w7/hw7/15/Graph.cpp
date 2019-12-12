@@ -23,7 +23,7 @@ void Graph::AddVertice(double x, double y) {
 	int added_vertices = vertices.size();
 	for (int i=0; i< added_vertices;i++){
 		auto vertice = vertices[i];
-		double distance = sqrt(pow(vertice.first - x, 2) + pow(vertice.first - y, 2));
+		double distance = (int)sqrt(pow(vertice.first - x, 2) + pow(vertice.first - y, 2));
 		AddEdge(i, added_vertices, distance);
 	}
 	vertices.push_back({ x,y });
@@ -51,6 +51,7 @@ double Graph::FindMST()
 		//проверяем наличие цикла (если наборы одинаковые - цикл)
 		if (set_u != set_v)
 		{
+			cout << u << " - " << v << endl;
 			// увеличиваем вес
 			mst_weight += it->first;
 			// сливаем наборы
@@ -79,6 +80,7 @@ double Graph::BruteForce() {
 	}
 	
 	double min_path = INT_MAX;
+	vector<int> min_path_nodes;
 	int k = 0;
 	do {
 		k = vertices_indexes[0];
@@ -87,8 +89,19 @@ double Graph::BruteForce() {
 			current_pathweight += vertices_matrix[k][vertices_indexes[i]];
 			k = vertices_indexes[i];
 		}
-		min_path = min(min_path, current_pathweight);
+		//вовзращаемся в начало
+		current_pathweight += vertices_matrix[k][vertices_indexes[0]];
+
+		if (current_pathweight < min_path) {
+			min_path = current_pathweight;
+			min_path_nodes = vertices_indexes;
+		}
 	} while (next_permutation(vertices_indexes.begin(), vertices_indexes.end()));
+
+	cout << "Brute path:";
+	for (auto mpn : min_path_nodes) {
+		cout << mpn;
+	}
 
 	return min_path;
 }

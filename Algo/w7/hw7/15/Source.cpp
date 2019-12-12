@@ -42,11 +42,21 @@ vector<pair<double, double>> GetPoints(int N){
 
 //возвращает отношение аденого пути к оптимальному
 double FindRoute(int n) {
-	vector<pair<double, double>> points = GetPoints(n);
+	/*vector<pair<double, double>> points = GetPoints(n);
 	Graph G(n, n * (n - 1) / 2);
 	for (auto p : points) {
 		G.AddVertice(p.first, p.second);
-	}
+	}*/
+
+	Graph G(4,6);
+
+	G.AddEdge(0, 1, 1);
+	G.AddEdge(1, 2, 2);
+	G.AddEdge(2, 3, 3);
+	G.AddEdge(3, 0, 4);
+	G.AddEdge(0, 2, 1);
+	G.AddEdge(3, 1, 2);
+
 
 	auto mst = G.FindMST();
 	auto brute = G.BruteForce();
@@ -67,7 +77,7 @@ pair<double, double> Experiment(int n_points, int n_itterations = 20) {
 int main() {
 	int n_experiments = 1;
 	vector<pair<double,double>> times;
-	for (int n_points = 8; n_points < 9; n_points++) {
+	for (int n_points = 6; n_points < 7; n_points++) {
 		times.push_back(Experiment(n_points, 1));
 	}
 	return 0;

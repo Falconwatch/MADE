@@ -23,7 +23,7 @@ void Graph::AddVertice(double x, double y) {
 	int added_vertices = vertices.size();
 	for (int i=0; i< added_vertices;i++){
 		auto vertice = vertices[i];
-		double distance = (int)sqrt(pow(vertice.first - x, 2) + pow(vertice.first - y, 2));
+		double distance = sqrt(pow(vertice.first - x, 2) + pow(vertice.first - y, 2));
 		AddEdge(i, added_vertices, distance);
 	}
 	vertices.push_back({ x,y });
@@ -33,6 +33,7 @@ void Graph::AddVertice(double x, double y) {
 double Graph::FindMST()
 {
 	double mst_weight = 0;
+	vector<int> mst_edges;
 
 	sort(edges.begin(), edges.end());
 
@@ -51,15 +52,14 @@ double Graph::FindMST()
 		//проверяем наличие цикла (если наборы одинаковые - цикл)
 		if (set_u != set_v)
 		{
-			cout << u << " - " << v << endl;
 			// увеличиваем вес
 			mst_weight += it->first;
 			// сливаем наборы
 			ds.Merge(set_u, set_v);
 		}
 	}
-
-	return mst_weight;
+	//т.к. я каждое ребро прохожу дваджы, удваиваю
+	return mst_weight * 2;
 }
 
 double Graph::BruteForce() {
@@ -97,11 +97,6 @@ double Graph::BruteForce() {
 			min_path_nodes = vertices_indexes;
 		}
 	} while (next_permutation(vertices_indexes.begin(), vertices_indexes.end()));
-
-	cout << "Brute path:";
-	for (auto mpn : min_path_nodes) {
-		cout << mpn;
-	}
 
 	return min_path;
 }

@@ -54,18 +54,6 @@ public:
 		DeleteSubtree(root_);
 	}
 
-	void DeleteSubtree(Node<T>* cur) {
-		if (cur == nullptr) return;
-		if (cur->left_ == nullptr && cur->right_ == nullptr) {
-			delete cur;
-			return;
-		}
-
-		DeleteSubtree(cur->left_);
-		DeleteSubtree(cur->right_);
-		delete cur;
-	}
-
 	int Insert(const T& data) {
 		if (root_ == nullptr) {
 			root_ = new Node<T>(data);
@@ -151,6 +139,19 @@ public:
 	}
 
 private:
+
+	void DeleteSubtree(Node<T>* cur) {
+		if (cur == nullptr) return;
+		if (cur->left_ == nullptr && cur->right_ == nullptr) {
+			delete cur;
+			return;
+		}
+
+		DeleteSubtree(cur->left_);
+		DeleteSubtree(cur->right_);
+		delete cur;
+	}
+
 	Node<T>* FindByPosition(int order, Node<T>* cur) {
 
 		if (order == GetSize(cur->right_)) return cur;

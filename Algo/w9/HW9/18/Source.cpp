@@ -70,12 +70,15 @@ double GetAngleBetweenVectors(Vector v1, Vector v2) {
 	double alpha = acos(cos_alpha);
 	return alpha;
 }
+
+//Ќайти угол между векторами по точкам
 double GetAngleBetweenPoints(Point p1, Point p2, Point p3) {
 	Vector v1(p1, p2);
 	Vector v2(p2, p3);
 	return GetAngleBetweenVectors(v1, v2);
 }
 
+//Ќайти нижнюю правую точку
 int FindBottomRightPoint(vector<Point> points)
 {
 	int found = 0;
@@ -96,6 +99,7 @@ int FindBottomRightPoint(vector<Point> points)
 	return found;
 }
 
+//найти периметр по последовательности точек
 double FindPerimetr(vector<Point> pointsSeq) {
 	//считаем периметр
 	double perimetr = 0;
@@ -107,6 +111,7 @@ double FindPerimetr(vector<Point> pointsSeq) {
 	return perimetr;
 }
 
+//найти ближайшую точку
 int GetNearestPoint(vector<Point> pointsSeq, Point lastPoint, Point prevPoint) {
 	double nearest_point_angle = 99999999999;
 	double nearest_point_distance = 99999999999;
@@ -134,34 +139,7 @@ int GetNearestPoint(vector<Point> pointsSeq, Point lastPoint, Point prevPoint) {
 	return nearest_point_index;
 }
 
-int GetNearestPoint(vector<Point> pointsSeq, Point lastPoint) {
-	double nearest_point_angle = 99999999999;
-	double nearest_point_distance = 99999999999;
-	int nearest_point_index = -1;
-
-	for (int i = 0; i < pointsSeq.size(); i++) {
-		//мерим угол точки
-		auto this_point_angle = pointsSeq[i].GetPolarAngle(lastPoint);
-		auto this_point_distance = lastPoint.GetDistanceToPoint(pointsSeq[i]);
-		if (this_point_angle < nearest_point_angle) {
-			nearest_point_angle = this_point_angle;
-			nearest_point_distance = this_point_distance;
-			nearest_point_index = i;
-		}
-		//углы равны - мерим рассто€ние
-		else if (this_point_angle == nearest_point_angle) {
-			if (this_point_distance < nearest_point_distance) {
-				nearest_point_angle = this_point_angle;
-				nearest_point_distance = this_point_distance;
-				nearest_point_index = i;
-			}
-		}
-	}
-	return nearest_point_index;
-}
-
-
-
+//Ќайти периметр выпуклой оболочки
 double FindShell(vector<Point> points) {
 	vector<Point> answer_seq;
 	//находим нижнюю-правую точку
@@ -173,7 +151,7 @@ double FindShell(vector<Point> points) {
 	points.erase(points.begin() + bottom_right_index);
 	
 	//добавл€ем в ответ ещЄ одну точку - ближайшую к стартовой
-	int nearest_point_index = GetNearestPoint(points, answer_seq[0]);
+	int nearest_point_index = GetNearestPoint(points, start_point, Point(start_point.GetX()-1, start_point.GetY()));
 	answer_seq.push_back(points[nearest_point_index]);
 	points.erase(points.begin() + nearest_point_index);
 	
@@ -181,7 +159,7 @@ double FindShell(vector<Point> points) {
 	points.push_back(start_point);
 	
 	
-	Point cur_point(0, 0);
+	Point cur_point;
 	do{
 		//нахожу точку ближаюшую к последней в ответе
 		Point last_point = answer_seq[answer_seq.size() - 1];

@@ -2,11 +2,10 @@
 #include<vector>
 #include<algorithm>
 #include<utility>
-#include <stdio.h>
-#include <math.h>
-#include <iomanip>
+#include<stdio.h>
+#include<math.h>
+#include<iomanip>
 #define PI acos(-1.0)
-
 
 using namespace std;
 
@@ -60,9 +59,7 @@ public:
 private:
 	Point start_;
 	Point end_;
-	
 };
-
 
 //Определяет угол между векторами
 double GetAngleBetweenVectors(Vector v1, Vector v2) {

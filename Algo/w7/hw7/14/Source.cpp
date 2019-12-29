@@ -30,6 +30,7 @@ public:
 	Components(int n);
 	int Find(int u);
 	void Merge(int x, int y);
+	~Components();
 private:
 	int* parents, * ranks;
 	int n;
@@ -64,7 +65,7 @@ int Graph::FindMST()
 		//проверяем наличие цикла (если наборы одинаковые - цикл)
 		if (set_u != set_v)
 		{
-			cout << u << "-" << v << endl;
+			//cout << u << "-" << v << endl;
 			// увеличиваем вес
 			mst_weight += it->first;
 			// сливаем наборы
@@ -87,6 +88,11 @@ Components::Components(int n) : n(n)
 		ranks[i] = 0;
 		parents[i] = i;
 	}
+}
+
+Components::~Components() {
+	delete[] parents;
+	delete[] ranks;
 }
 
 int Components::Find(int u)

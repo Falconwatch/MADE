@@ -8,7 +8,7 @@ using namespace std;
 class AhoCorasicAutomat {
 public:
 	//создаём автомат из длинного паттерна
-	AhoCorasicAutomat(string fullpattern): bor_root(make_unique<Node>()) {		
+	AhoCorasicAutomat(string fullpattern): bor_root(new Node()) {		
 		//длинный паттерн разбиваем на маленькие по знакам вопроса
 		vector<string> patterns = SplitString(fullpattern);
 
@@ -24,13 +24,13 @@ public:
 	}
 	
 	bool AddPattern(string pattern) {
-		Node* current = bor_root.get();
+		Node* current = bor_root;
 
 		for (char ch : pattern) {
 			if (current->Children.find(ch) == current->Children.end())
-				current->Children[ch] = std::make_unique<Node>();
-
-			current = current->Children[ch].get();
+				current->Children[ch] = new Node(*current);
+			
+			current = current->Children[ch];
 		}
 
 		if (current->IsTerminal)
@@ -42,13 +42,17 @@ public:
 
 private:
 	struct Node {
-		Node() = default;
-		map<char, unique_ptr<Node>> Children;
-		bool IsTerminal;
+		Node(Node& parrent) {
+			Parrent = &parrent;
+		}
+		Node() {}
 
+		map<char, Node*> Children;
+		bool IsTerminal;
+		Node* Parrent;
 	};
 
-	unique_ptr<Node> bor_root;
+	Node* bor_root;
 
 	vector<string> SplitString(string fullpattern)
 	{
@@ -69,8 +73,11 @@ private:
 
 int main() {
 	string pattern, text;
-	cin >> pattern;
-	cin >> text;
+	pattern = "aa??bab?cbaa?";
+	text = "aabbbabbcbaabaabbbabbcbaab";
+
+	//cin >> pattern;
+	//cin >> text;
 
 	AhoCorasicAutomat aka(pattern);
 
